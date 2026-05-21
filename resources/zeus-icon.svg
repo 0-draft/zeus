@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#1a2342"/>
+      <stop offset="55%" stop-color="#0d1129"/>
+      <stop offset="100%" stop-color="#05060f"/>
+    </radialGradient>
+    <linearGradient id="bolt" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#fff5b0"/>
+      <stop offset="45%" stop-color="#ffd23f"/>
+      <stop offset="100%" stop-color="#f07a1a"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="200" ry="200" fill="url(#bg)"/>
+
+  <g filter="url(#glow)" fill="url(#bolt)" stroke="#fff5b0" stroke-width="4" stroke-linejoin="miter">
+    <rect x="240" y="250" width="544" height="120"/>
+    <rect x="240" y="654" width="544" height="120"/>
+    <polygon points="664,370 784,370 360,654 240,654"/>
+  </g>
+</svg>
