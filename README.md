@@ -27,8 +27,10 @@ Quick start:
 ```bash
 npm install
 npm run watch
-./scripts/code.sh   # macOS / Linux
+./scripts/z.sh      # macOS / Linux (alias of code.sh)
 ```
+
+Release builds expose the editor on `PATH` as `z`, so you can `z .` from any directory.
 
 Node version is pinned in `.nvmrc` (currently `22.22.1`).
 
