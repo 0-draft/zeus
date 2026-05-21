@@ -1,28 +1,14 @@
 # Zeus
 
-> A VS Code fork that aims to be **zero-config**, **delightful**, and **AI-native** — while staying fully compatible with the VS Code extension ecosystem.
-
-Zeus is a downstream fork of [`microsoft/vscode`](https://github.com/microsoft/vscode) (`Code - OSS`), MIT licensed.
-
-## Why another VS Code fork
-
-The VS Code fork space (Cursor, Windsurf, Void, VSCodium, ...) is crowded. Zeus exists because each of them leaves something on the table:
-
-- **Zero-configuration, Ghostty-style.** Install it, open it, work. No "first you need to set up these 14 settings" tutorial. Sensible defaults, fast cold start, no setup pages.
-- **Fix the long-tail pain points of existing forks.** Things like opaque telemetry, AI features bolted on instead of integrated, mandatory accounts, extension marketplace lock-in, sluggish startup, fragile sync — these become non-goals for Zeus.
-- **A UI that's actually exciting to look at.** Not "VS Code with a new accent color". Treat the editor chrome as something worth designing, not just a frame around a textbuffer.
-- **AI-native, not AI-bolted-on.** Built assuming an LLM is in the loop from day one — completion, chat, edits, agents — integrated at the editor primitive level, not as a side panel.
-- **Full VS Code extension compatibility.** Inherited from the fork. Everything you already use from the Open VSX / VS Code marketplace keeps working.
+A fork of [`microsoft/vscode`](https://github.com/microsoft/vscode) (`Code - OSS`), MIT licensed.
 
 ## Status
 
-Day 1. This repo is a fresh fork of `microsoft/vscode` with a rename pass on `package.json` / `product.json`. Build pipeline, rebrand assets, and the differentiating features above are not yet implemented.
+Day 1. `package.json` / `product.json` / `cli/Cargo.toml` are renamed to Zeus; placeholder icon and Open VSX gallery wired up. Most differentiating work is not yet done.
 
 ## Building from source
 
-Zeus inherits VS Code's build system. See [`microsoft/vscode` — How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute) until Zeus-specific build docs exist.
-
-Quick start:
+Zeus inherits VS Code's build system. Until Zeus-specific build docs exist, the upstream [How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute) wiki is the reference.
 
 ```bash
 npm install
@@ -30,7 +16,7 @@ npm run watch
 ./scripts/z.sh      # macOS / Linux (alias of code.sh)
 ```
 
-Release builds expose the editor on `PATH` as `z`, so you can `z .` from any directory.
+Release builds expose the editor on `PATH` as `z`.
 
 Node version is pinned in `.nvmrc` (currently `22.22.1`).
 
