@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@microsoft/1ds-core-js": "^3.2.13",
-    "@microsoft/1ds-post-js": "^3.2.13",
+    "@microsoft/1ds-post-js": "^3.2.18",
     "@vscode/codicons": "^0.0.46-11",
     "@vscode/iconv-lite-umd": "0.7.1",
     "@vscode/tree-sitter-wasm": "^0.3.1",
@@ -19,7 +19,7 @@
     "@xterm/addon-webgl": "^0.20.0-beta.212",
     "@xterm/xterm": "^6.1.0-beta.213",
     "jschardet": "3.1.4",
-    "katex": "^0.16.22",
+    "katex": "^0.16.47",
     "tas-client": "0.3.1",
     "vscode-oniguruma": "1.7.0",
     "vscode-textmate": "^9.3.2"
