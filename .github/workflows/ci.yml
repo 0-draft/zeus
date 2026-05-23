@@ -44,6 +44,8 @@ jobs:
 
       - name: tsec security lint
         run: npm run tsec-compile-check
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Architecture layers check
         run: npm run valid-layers-check
