@@ -10,7 +10,9 @@ import type { ILigatureOptions, LigaturesAddon as LigaturesAddonType } from '@xt
 import type { WebglAddon as WebglAddonType } from '@xterm/addon-webgl';
 import type { SerializeAddon as SerializeAddonType } from '@xterm/addon-serialize';
 import type { ImageAddon as ImageAddonType } from '@xterm/addon-image';
-import type { ClipboardAddon as ClipboardAddonType, ClipboardSelectionType } from '@xterm/addon-clipboard';
+import type { ClipboardAddon as ClipboardAddonType } from '@xterm/addon-clipboard';
+
+type ClipboardSelectionType = string;
 import * as dom from '../../../../../base/browser/dom.js';
 import { IXtermCore } from '../xterm-private.js';
 import { IConfigurationService } from '../../../../../platform/configuration/common/configuration.js';
