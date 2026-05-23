@@ -151,7 +151,7 @@ jobs:
           name: build-out
 
       - name: Install playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox
 
       - name: Run browser unit tests
         run: xvfb-run --auto-servernum npm run test-browser-no-install
