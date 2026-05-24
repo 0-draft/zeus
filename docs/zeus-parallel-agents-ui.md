@@ -6,14 +6,14 @@ This is the deliberate counter-positioning vs Cursor 3 / Antigravity 2.0 / Winds
 
 ## Where the UI lives
 
-A **side bar view** (not the activity bar's first slot, not the editor center). Closeable. Reopen via command palette.
+An **auxiliary bar view** (the right-side container in VS Code's workbench — formally "auxiliary bar"; the "side bar" is the left-side container by VS Code's own naming). Not the activity bar's first slot, not the editor center. Closeable. Reopen via command palette.
 
 ```text
 ┌──┬───────────────────────────┬─ Parallel agents view ──────────┐
 │  │                           │  ▶ docs-writer    streaming…    │
 │A │   Editor (primary)        │     tool: read_file             │
 │c │   user code, just like    │  ▶ test-writer    waiting on    │
-│t │   vscode                  │     tool approval               │
+│t │   VS Code                 │     tool approval               │
 │iv│                           │  ▼ security-reviewer  done ·    │
 │it│                           │      3 findings                 │
 │y │                           │      findings.md modified       │
@@ -22,14 +22,14 @@ A **side bar view** (not the activity bar's first slot, not the editor center). 
 │ Status bar  ⚡ 2 agents running · $0.41 today · cache: 92% hit │
 └────────────────────────────────────────────────────────────────┘
    ↑ status item is always visible; clicking it focuses the
-     side-bar view (right-side panel by default, draggable to
-     left). The status bar sits at the bottom — below both the
-     editor and the side bar — per vscode's workbench layout.
+     auxiliary-bar view (right by default, draggable to left).
+     The status bar sits at the bottom — below both the editor
+     and the auxiliary bar — per VS Code's workbench layout.
 ```
 
 ## Behavior
 
-- New agent: `Ctrl+Shift+A` opens a quick-pick of skills from `.zeus/skills/`, runs the chosen one
+- New agent: `Ctrl+K Ctrl+N` (chord) opens a quick-pick of skills from `.zeus/skills/`, runs the chosen one. The earlier draft used `Ctrl+Shift+A`, but that clashes with VS Code's `toggleSearchEditorContextLines` in the Search Editor; using a chord keeps the new shortcut out of every default scope
 - Each agent: own subtree in the view with timeline (tool calls, text deltas), final summary, cancel button, "open in chat" button
 - Done agents move to "Recent" collapsed group; never auto-dismissed
 - A finished agent's file edits are surfaced as a diff PR-style review, not auto-applied
@@ -56,7 +56,7 @@ A **side bar view** (not the activity bar's first slot, not the editor center). 
 - [ ] Done agents persist in the view for the session
 - [ ] No auto-open behavior on startup
 - [ ] File edits are shown as diff, never applied without user "Apply"
-- [ ] Keyboard: `Ctrl+Shift+A` new agent, `Ctrl+K Ctrl+A` focus list (chord, to avoid VS Code's `Ctrl+Shift+L` = `editor.action.selectHighlights` needed for multi-cursor)
+- [ ] Keyboard: `Ctrl+K Ctrl+N` new agent, `Ctrl+K Ctrl+A` focus list — both chords, to avoid VS Code defaults (`Ctrl+Shift+A` is `toggleSearchEditorContextLines`; `Ctrl+Shift+L` is `editor.action.selectHighlights`)
 
 ## Status
 
