@@ -2,7 +2,7 @@
 
 Slot for the built-in MCP client. Design lives at [`docs/zeus-mcp-client.md`](../../../../../docs/zeus-mcp-client.md).
 
-When the real implementation lands, this directory will contain (vscode layering: `common/` is platform-agnostic, `browser/` is renderer, `node/` is the Node-only half that can spawn subprocesses):
+When the real implementation lands, this directory will contain (VS Code layering: `common/` is platform-agnostic, `browser/` is renderer, `node/` is the Node-only half that can spawn subprocesses):
 
 - `common/mcpTypes.ts` — shared types
 - `common/mcpToolAggregator.ts` — unified, namespaced tool registry
