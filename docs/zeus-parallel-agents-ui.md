@@ -54,7 +54,7 @@ A **side bar view** (not the activity bar's first slot, not the editor center). 
 - [ ] Done agents persist in the view for the session
 - [ ] No auto-open behavior on startup
 - [ ] File edits are shown as diff, never applied without user "Apply"
-- [ ] Keyboard: Ctrl+Shift+A new agent, Ctrl+Shift+L focus list
+- [ ] Keyboard: `Ctrl+Shift+A` new agent, `Ctrl+K Ctrl+A` focus list (chord, to avoid VS Code's `Ctrl+Shift+L` = `editor.action.selectHighlights` needed for multi-cursor)
 
 ## Status
 
