@@ -12,6 +12,7 @@ pub mod agent_logs;
 pub mod agent_ps;
 pub mod agent_stop;
 pub mod args;
+pub mod mcp;
 pub mod output;
 pub mod serve_web;
 pub mod tunnels;

@@ -189,6 +189,34 @@ pub enum Commands {
 	/// Manage agent host sessions.
 	#[clap(name = "agent")]
 	Agent(AgentArgs),
+
+	/// Expose the editor as a Model Context Protocol (MCP) server.
+	#[clap(name = "mcp")]
+	Mcp(McpArgs),
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct McpArgs {
+	/// Transport to use. `stdio` for line-oriented clients (Claude Code CLI
+	/// and similar), `sse` for HTTP clients.
+	#[clap(long, default_value = "stdio")]
+	pub transport: McpTransport,
+
+	/// Port to bind to when --transport=sse. 0 (default) picks an
+	/// ephemeral port; the chosen port is printed on startup.
+	#[clap(long, default_value_t = 0)]
+	pub port: u16,
+
+	/// Workspace root. Defaults to the current working directory. The
+	/// server refuses operations on paths outside this root.
+	#[clap(long)]
+	pub workspace: Option<PathBuf>,
+}
+
+#[derive(ValueEnum, Debug, Clone, Copy)]
+pub enum McpTransport {
+	Stdio,
+	Sse,
 }
 
 #[derive(Args, Debug, Clone)]
