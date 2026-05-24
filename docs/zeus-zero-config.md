@@ -32,9 +32,9 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 - `files.autoSave`: `off` → **`onFocusChange`**
   - Why: every junior dev's first complaint is "I lost my work." `onFocusChange` saves on context switch (tab away, terminal focus, palette open) — strictly safer than `off` without the rearrange-while-typing problem `afterDelay` has when combined with `formatOnSave`.
   - Trade-off: writes to disk happen at focus boundaries, slightly later than `afterDelay` but earlier than `onWindowChange`.
-- `files.trimTrailingWhitespace`: `false` → **`true`**
+- `files.trimTrailingWhitespace`: `false` → **`true`** *with a per-language carve-out for Markdown*
   - Why: matches what almost every linter / formatter does anyway; the editor doing it preemptively means cleaner diffs.
-  - Trade-off: Markdown's "two trailing spaces = line break" convention loses on save. Users who care about that syntax can scope an override per-language.
+  - Carve-out: the Zeus default profile also ships `"[markdown]": { "files.trimTrailingWhitespace": false }` so Markdown's "two trailing spaces = line break" convention isn't silently broken. Users get clean diffs everywhere else and standards-compliant Markdown without thinking about it.
 - `files.insertFinalNewline`: `false` → **`true`**
   - Why: POSIX-friendly; many tools (`tail`, `cat`, `git diff`) handle file-with-trailing-newline better.
   - Trade-off: noisy first-diff if a file in an existing repo previously lacked one.
@@ -47,6 +47,7 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
   - Why: catches forgotten formatting on every save instead of relying on pre-commit hooks.
   - Implementation: a one-line activation hook checks for a formatter; if present, format-on-save is enabled.
   - Also: `editor.formatOnSaveMode`: `file` → **`modifications`**. Only the lines the user touched are reformatted. Saves legacy / messy codebases from one-shot formatter churn the first time they're opened in Zeus.
+  - Caveat: `modifications` requires the file to be tracked by Git (or another supported SCM) — VS Code uses the SCM diff to know which ranges are "yours". For standalone files or projects without `git init`, the mode silently falls back to formatting nothing. Zeus's first-run flow surfaces this as a hint when the user opens an untracked folder: "Run `git init` to enable smart format-on-save." Users who don't want that behaviour can set `"editor.formatOnSaveMode": "file"` in workspace settings.
   - Trade-off: users on green-field projects sometimes want full-file format; one-line override per workspace.
 - `editor.minimap.enabled`: `true` → **`false`**
   - Why: minimap is noise for most users. The 20% who love it can flip it back.
@@ -58,14 +59,15 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 - `editor.guides.bracketPairs`: `false` → **`"active"`**
   - Why: highlights the bracket nesting around the cursor without painting every line.
   - Trade-off: more visual noise for users who prefer a totally clean gutter.
-- `editor.fontFamily`: VS Code default → **OS-native monospace stack** (SF Mono on macOS, Cascadia Code on Windows, `monospace` on Linux — fontconfig resolves it to the system's preferred fixed-width family)
-  - Why: VS Code defaults to Consolas / Menlo. Modern OS-native looks better in 2026.
+- `editor.fontFamily`: VS Code default → **OS-native monospace stack**
+  - Concrete string shipped in the profile JSON: `'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Ubuntu Mono', 'Liberation Mono', Menlo, Monaco, Consolas, monospace`
+  - Why: VS Code defaults to platform-specific Consolas / Menlo only. The stack above prefers the OS-native fixed-width face when it exists (SF Mono on macOS, Cascadia on Windows, Ubuntu Mono on Ubuntu) and falls back to the generic `monospace` keyword on Linux — `monospace` is the standard CSS generic-family that fontconfig maps to the system's preferred fixed-width family, where `system` would be ambiguous and could resolve to a proportional face.
 
 ## Terminal
 
-- `terminal.integrated.copyOnSelection`: `false` → **`true`**
-  - Why: matches macOS Terminal / iTerm muscle memory and Linux X11 default.
-  - Trade-off: clobbers the system clipboard mid-task for users who rely on long-lived clipboard contents.
+- `terminal.integrated.copyOnSelection`: `false` → **`false`** (keep VS Code's default)
+  - Why we considered changing it: iTerm2 and X11 copy-on-select muscle memory is strong for terminal heavy users.
+  - Why we kept the default: stock macOS Terminal does *not* copy on selection (Cmd+C is required), so "matches macOS Terminal" is wrong, and the change clobbers the system clipboard for the select-to-replace workflow that's common when editing in the integrated terminal. Users who want it can flip the one setting.
 - `terminal.integrated.shellIntegration.enabled`: `true` → **`true`** (keep)
 
 ## Search
