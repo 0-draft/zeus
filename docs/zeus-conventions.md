@@ -107,11 +107,17 @@ MCP servers to connect to. Same shape as Claude Code's `mcp.json` for compatibil
 
 Secrets are referenced via `${env:NAME}` only. Plain values in `env` blocks are still allowed for non-secret config, but `mcp.json` is meant to live in git so don't commit secrets there.
 
-## Reload behaviour
+## Reload behaviour (planned)
+
+This is the target behaviour for the loaders in [`feat/mcp-client`](https://github.com/0-draft/zeus/pulls?q=is%3Apr+head%3Afeat/mcp-client) and [`feat/agent-sdk`](https://github.com/0-draft/zeus/pulls?q=is%3Apr+head%3Afeat/agent-sdk). **None of it is implemented in this PR**; this PR ships the on-disk format only.
+
+What we plan to ship:
 
 - On Zeus start, the entire `.zeus/` tree is read.
 - Editing any file under `.zeus/` triggers an incremental reload of the affected piece (skill / memory / policy / mcp.json).
 - `mcp.json` reload restarts only the affected MCP server connections, not all of them.
+
+The closest existing piece in the inherited vscode codebase is the MCP `dev.watch` restart logic in `src/vs/workbench/contrib/mcp/common/mcpConfiguration.ts` and `mcpDevMode.ts`. That watches arbitrary file globs declared per-server, not `.zeus/mcp.json` itself. Zeus's reload spec sits one layer above it.
 
 ## Open questions
 
