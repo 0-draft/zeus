@@ -74,7 +74,7 @@ windows-sys = { version = "0.61", features = ["Win32_System_Console", "Win32_UI_
 core-foundation = "0.9.3"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-zbus = { version = "3.13.1", default-features = false, features = ["tokio"] }
+zbus = { version = "5.15.0", default-features = false, features = ["tokio"] }
 
 [patch.crates-io]
 russh = { git = "https://github.com/microsoft/vscode-russh", branch = "main" }
