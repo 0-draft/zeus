@@ -25,9 +25,9 @@ This is intentionally a built-in contribution rather than a VS Code extension. M
 
 Mitigations:
 
-- **Trust prompt** — the first time a workspace is opened with a non-empty `mcp.json`, or whenever a new server entry is added in a subsequent pull, Zeus blocks startup of those servers and shows a per-server confirmation pane (similar to vscode's "Restricted Mode" workspace trust). Accepting writes a fingerprint into per-user (not in-git) state so the prompt doesn't re-fire on every edit.
-- **Inherit Workspace Trust** — if the workspace is in Restricted Mode, refuse to spawn any stdio server. SSE-only entries can be allowed because they don't execute local code.
-- **Hard refuse on `command: bash -c "<arbitrary>"` patterns** — block shell-form commands in `command:`; require `args:` arrays for argument vectors.
+- **Trust prompt** — the first time a workspace is opened with a non-empty `mcp.json`, *or* whenever a server entry is added **or modified** (any change to `command`, `args`, `env`, `url`, or `transport`), Zeus blocks startup of those servers and shows a per-server confirmation pane (similar to vscode's "Restricted Mode" workspace trust). The fingerprint stored in per-user (not in-git) state is a hash of the entire normalised server-config object — any tweak invalidates the prior consent so a colleague editing in `args:` re-prompts the user.
+- **Inherit Workspace Trust** — if the workspace is in Restricted Mode, refuse to spawn any server (stdio *and* SSE). A remote SSE endpoint never executes local code itself, but the tools it exposes can still cause file writes, shell calls, or prompt-injection via the agent, so the trust prompt covers it too.
+- **Refuse shell wrappers, not just `bash -c`** — `command:` must resolve to an actual executable path; argument vectors must go through `args:`. Reject `command:` values whose basename matches any shell (`sh`, `bash`, `zsh`, `ksh`, `fish`, `pwsh`, `cmd`, `cmd.exe`, `powershell`, `powershell.exe`) when paired with a `-c` / `/c` / `-Command` flag in `args:`. The point is to make the executable + argv structurally visible, not to chase shell-specific bypasses.
 
 ## Secret storage
 
@@ -77,7 +77,7 @@ IAgentRuntime (Agent SDK PR consumes this)
 - [ ] Aggregates all tool definitions into a single registry
 - [ ] Reloads on file change without restarting unaffected servers
 - [ ] Surfaces server connection errors in the status bar
-- [ ] Refuses servers that try to register tools with reserved name prefixes (`buffer_`, `agent_`, `editor_` — those belong to the MCP **server** half)
+- [ ] Zeus's own MCP **server** half publishes its tools under a `zeus_` prefix (e.g. `zeus_buffer_read`, `zeus_editor_open`). Third-party servers are free to use any name they like — including `buffer_` or `editor_` — because tool name conflicts across servers are resolved by the `<server-name>__<tool-name>` namespacing rule below, not by reserving a global prefix
 - [ ] Collisions across servers are resolved by namespacing exposed tools as `<server-name>__<tool-name>` in the aggregated registry; the underlying call still goes to the originally-named tool on the right server. UI surfaces show the short tool name with the server name as secondary text.
 
 ## Status
