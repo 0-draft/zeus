@@ -15,7 +15,12 @@ import { isWindows } from '../../../../../base/common/platform.js';
 // test's `delay >= GRACE_TIME` assertion still scales correctly.
 const GRACE_TIME = 1000;
 
-suite('McpStdioStateHandler', () => {
+// `sigkill after grace` waits at least GRACE_TIME * 2 = 2000ms, which
+// collides with mocha's default 2000ms test timeout. Raise the suite
+// timeout so the SIGTERM-then-SIGKILL path has room without becoming
+// flaky again.
+suite('McpStdioStateHandler', function () {
+	this.timeout(10_000);
 	const store = ensureNoDisposablesAreLeakedInTestSuite();
 
 	function run(code: string) {
