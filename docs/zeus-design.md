@@ -24,9 +24,9 @@ UI font (chrome, not the editor):
 
 - macOS: SF Pro Text → SF Pro Display for large headings
 - Windows: Segoe UI Variable
-- Linux: Inter → system
+- Linux: system UI font → Inter (bundled fallback) → system
 
-We ship JetBrains Mono and Inter as fallbacks so the experience is consistent even when system fonts are unusual.
+JetBrains Mono (monospace) and Inter (UI) are bundled with the app so the experience stays consistent even when system fonts are unusual or non-Latin glyph coverage is missing.
 
 ## Motion
 
@@ -66,11 +66,13 @@ Avoid: putting the Z everywhere. Each appearance should mean something.
 Today's VS Code status bar is a tag soup. Zeus groups it:
 
 ```text
-[ 🔀 main ↑2  ] [ ✦ Zeus  92% cache  $0.41 ] [ ⓘ ]    [ Ln 12 · UTF-8 · Spaces:2 ]
-  ↑ left: git / project           ↑ middle: AI HUD       ↑ right: editor state
+[ 🔀 main ↑2  ] [ ✦ Zeus  92% cache  $0.41 ] [ ⚠ 2 ]    [ Ln 12 · UTF-8 · Spaces:2 ]
+  ↑ left: git / project           ↑ middle: AI HUD     ↑ problems   ↑ right: editor state
 ```
 
-Each cluster has its own visual treatment. Middle cluster is Zeus-specific. The cost segment (`$0.41`) is configurable via `zeus.ai.hud.enabled` from [`docs/zeus-prompt-cache-hud.md`](zeus-prompt-cache-hud.md) — users who don't want a live "ticker" can hide it without losing the rest of the HUD.
+Each cluster has its own visual treatment. Middle cluster is Zeus-specific. The `[ ⚠ N ]` chip is the existing vscode Problems indicator (errors + warnings count) pulled out of the right cluster so it sits next to the AI HUD — putting "the editor's diagnostics" and "the AI's diagnostics" side by side makes the relationship obvious.
+
+The cost segment (`$0.41`) is configurable via `zeus.ai.hud.enabled` from [`docs/zeus-prompt-cache-hud.md`](zeus-prompt-cache-hud.md) — users who don't want a live "ticker" can hide it without losing the rest of the HUD.
 
 ## Density modes
 
@@ -92,7 +94,7 @@ Three density presets via `zeus.ui.density`, in descending order from tallest to
 - [ ] Themes ship enabled, not as marketplace prompts
 - [ ] All motion respects `prefers-reduced-motion`
 - [ ] Density toggle works without restart
-- [ ] At least one before/after screenshot per section in this doc, kept up to date
+- [ ] Each section gets at least one before/after screenshot **when its implementation PR lands** (not in this design-only PR — nothing to screenshot yet)
 
 ## Status
 
