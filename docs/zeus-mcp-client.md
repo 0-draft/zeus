@@ -25,9 +25,9 @@ This is intentionally a built-in contribution rather than a VS Code extension. M
 
 Mitigations:
 
-- **Trust prompt** — the first time a workspace is opened with a non-empty `mcp.json`, *or* whenever a server entry is added **or modified** (any change to `command`, `args`, `env`, `url`, or `transport`), Zeus blocks startup of those servers and shows a per-server confirmation pane (similar to vscode's "Restricted Mode" workspace trust). The fingerprint stored in per-user (not in-git) state is a hash of the entire normalised server-config object — any tweak invalidates the prior consent so a colleague editing in `args:` re-prompts the user.
+- **Trust prompt** — the first time a workspace is opened with a non-empty `mcp.json`, *or* whenever a server entry is added **or modified** (any change to `command`, `args`, `env`, `url`, or `transport`), Zeus blocks startup of those servers and shows a per-server confirmation pane (similar to VS Code's "Restricted Mode" workspace trust). The fingerprint stored in per-user (not in-git) state is `sha256(canonical_json(serverConfig))`, where `canonical_json` (a) sorts object keys lexicographically at every depth, (b) resolves relative `command:` paths against the workspace root to absolute, (c) drops trailing whitespace in env values, and (d) uses LF line endings. Equal-meaning configurations therefore hash identically across platforms and JSON serializers, and any tweak invalidates the prior consent.
 - **Inherit Workspace Trust** — if the workspace is in Restricted Mode, refuse to spawn any server (stdio *and* SSE). A remote SSE endpoint never executes local code itself, but the tools it exposes can still cause file writes, shell calls, or prompt-injection via the agent, so the trust prompt covers it too.
-- **Refuse shell wrappers, not just `bash -c`** — `command:` must resolve to an actual executable path; argument vectors must go through `args:`. Reject `command:` values whose basename matches any shell (`sh`, `bash`, `zsh`, `ksh`, `fish`, `pwsh`, `cmd`, `cmd.exe`, `powershell`, `powershell.exe`) when paired with a `-c` / `/c` / `-Command` flag in `args:`. The point is to make the executable + argv structurally visible, not to chase shell-specific bypasses.
+- **Refuse shell wrappers, not just `bash -c`** — `command:` must resolve to an actual executable path; argument vectors must go through `args:`. Reject `command:` values whose basename matches any shell (`sh`, `dash`, `bash`, `zsh`, `ksh`, `fish`, `pwsh`, `cmd`, `cmd.exe`, `powershell`, `powershell.exe`) when paired with an execution flag in `args:`: `-c` / `/c` / `-Command` / `-EncodedCommand`. (PowerShell's `-EncodedCommand` is a common obfuscation vector and gets the same treatment as `-Command`.) The point is to make the executable + argv structurally visible, not to chase shell-specific bypasses.
 
 ## Secret storage
 
@@ -35,7 +35,8 @@ Mitigations:
 
 - `${env:NAME}` resolves at spawn time from the user's environment
 - `${secret:keychain:NAME}` reads from `vscode.SecretStorage` (per-user, OS-keychain backed)
-- Plain string values are accepted only for non-secret config; the loader warns when a field name matches a heuristic list (`*_TOKEN`, `*_KEY`, `*_SECRET`, `PASSWORD`) and the value isn't a reference
+- Plain string values are accepted only for non-secret config. The loader **refuses to start** a server (rather than just warning) when a field name matches the heuristic list (`*_TOKEN`, `*_KEY`, `*_SECRET`, `PASSWORD`) and the value is not a `${env:...}` / `${secret:...}` reference. The user sees a per-server error in the status bar with a "Move to keychain" quick-fix that creates the secret and rewrites the reference for them.
+- A separate high-entropy heuristic (≥ 32 chars, base64 / hex-ish) on **any** plain `env` value triggers the same refuse-and-prompt path, so secrets that don't match the field-name list still get caught.
 
 Never write secret values back into the file. The loader is read-only against `mcp.json`.
 
@@ -73,12 +74,12 @@ IAgentRuntime (Agent SDK PR consumes this)
 
 - [ ] Loads `.zeus/mcp.json` at workbench startup
 - [ ] Spawns each `stdio` server as a child process
-- [ ] Connects to each `sse` server with bearer auth
+- [ ] Connects to each `sse` server with bearer auth, where the token **must** come from a `${secret:keychain:...}` (or `${env:...}`) reference in the server entry — hard-coded bearer tokens in `mcp.json` are refused by the same secret-storage rule above
 - [ ] Aggregates all tool definitions into a single registry
 - [ ] Reloads on file change without restarting unaffected servers
 - [ ] Surfaces server connection errors in the status bar
-- [ ] Zeus's own MCP **server** half publishes its tools under a `zeus_` prefix (e.g. `zeus_buffer_read`, `zeus_editor_open`). Third-party servers are free to use any name they like — including `buffer_` or `editor_` — because tool name conflicts across servers are resolved by the `<server-name>__<tool-name>` namespacing rule below, not by reserving a global prefix
-- [ ] Collisions across servers are resolved by namespacing exposed tools as `<server-name>__<tool-name>` in the aggregated registry; the underlying call still goes to the originally-named tool on the right server. UI surfaces show the short tool name with the server name as secondary text.
+- [ ] Zeus's own MCP **server** half publishes its tools under the `zeus__` prefix (double underscore, matching the third-party namespacing rule below — e.g. `zeus__buffer_read`, `zeus__editor_open`). The double-underscore separator means a third-party server *literally* named `zeus` does not collide with our internal surface
+- [ ] **All** third-party tools are always exposed as `<server-name>__<tool-name>` in the aggregated registry, regardless of whether another server has registered the same short name. Always-namespacing (rather than namespacing-on-collision) means the tool name the agent sees is stable: it does not change when a new server is added later. UI surfaces still show the short tool name with the server name as secondary text. The underlying call dispatches to the originally-named tool on the right server.
 
 ## Status
 
