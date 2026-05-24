@@ -22,8 +22,7 @@ cask "zeus" do
   sha256 arm:   "PLACEHOLDER_SHA256_ARM",
          intel: "PLACEHOLDER_SHA256_INTEL"
 
-  url "https://github.com/0-draft/zeus/releases/download/v#{version}/Zeus-#{version}-#{arch}.dmg",
-      verified: "github.com/0-draft/zeus/"
+  url "https://github.com/0-draft/zeus/releases/download/v#{version}/Zeus-#{version}-#{arch}.dmg"
   name "Zeus"
   desc "MCP-first code editor built on VS Code"
   homepage "https://github.com/0-draft/zeus"
@@ -31,11 +30,15 @@ cask "zeus" do
   app "Zeus.app"
 
   zap trash: [
-    "~/Library/Application Support/Zeus",
-    "~/Library/Preferences/com.0draft.zeus.plist",
-    "~/Library/Saved Application State/com.0draft.zeus.savedState",
     "~/.zeus",
-    "~/.zeus-shared"
+    "~/.zeus-shared",
+    "~/Library/Application Support/Zeus",
+    "~/Library/Caches/com.0draft.zeus",
+    "~/Library/Caches/com.0draft.zeus.ShipIt",
+    "~/Library/HTTPStorages/com.0draft.zeus",
+    "~/Library/Logs/Zeus",
+    "~/Library/Preferences/com.0draft.zeus.plist",
+    "~/Library/Saved Application State/com.0draft.zeus.savedState"
   ]
 end
 ```
