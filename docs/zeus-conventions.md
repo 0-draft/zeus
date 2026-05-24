@@ -33,10 +33,10 @@ allowed-tools: buffer_get, search_workspace
 
 Scan recent edits for:
 
-- AWS access keys (`AKIA[0-9A-Z]{16}`)
+- AWS access keys (`\b(AKIA|ASIA)[A-Z0-9]{16}\b`)
 - Private key headers (`-----BEGIN.*PRIVATE KEY-----`)
-- GitHub tokens (`ghp_[0-9a-zA-Z]{36}`)
-- Long alphanumeric values assigned to `*_KEY` / `*_SECRET` variables
+- GitHub tokens (prefixes `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_`)
+- Long alphanumeric values assigned to `*_KEY` / `*_SECRET` / `*_TOKEN` variables
 
 When something matches, annotate the line and propose a `.env.example` placeholder.
 ```
@@ -45,7 +45,7 @@ Frontmatter fields:
 
 - `name` (required): unique identifier within `.zeus/skills/`. Duplicates fail loading.
 - `description` (required): one-line summary used by the model to decide when to invoke the skill.
-- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. Empty means all.
+- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. **Omitted** = all tools allowed; **present but empty** = no tools allowed.
 
 ## `.zeus/memory/`
 
