@@ -68,8 +68,9 @@ export class NodeWorkerDiffComputeService extends Disposable implements IDiffCom
 			});
 			w.on('error', err => {
 				this._logService.error('[DiffComputeService] Worker error', err);
+				const error = err instanceof Error ? err : new Error(String(err));
 				for (const [, handler] of this._pending) {
-					handler.reject(err);
+					handler.reject(error);
 				}
 				this._pending.clear();
 				this._worker = undefined;
