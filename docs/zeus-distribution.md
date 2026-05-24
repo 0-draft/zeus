@@ -28,6 +28,7 @@ cask "zeus" do
   homepage "https://github.com/0-draft/zeus"
 
   app "Zeus.app"
+  binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z"
 
   zap trash: [
     "~/.zeus",
@@ -38,7 +39,9 @@ cask "zeus" do
     "~/Library/HTTPStorages/com.0draft.zeus",
     "~/Library/Logs/Zeus",
     "~/Library/Preferences/com.0draft.zeus.plist",
-    "~/Library/Saved Application State/com.0draft.zeus.savedState"
+    "~/Library/Saved Application State/com.0draft.zeus.savedState",
+    "~/Library/WebKit/com.0draft.zeus",
+    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl3"
   ]
 end
 ```
