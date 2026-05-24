@@ -27,7 +27,7 @@ We deliberately **do not** test Microsoft-published extensions that enforce runt
 2. Installs all extensions from `manifest.json` in a single `--install-extension ... --install-extension ...` call (binary startup is expensive, batching is faster)
 3. Calls `code --list-extensions --show-versions` and asserts each entry from the manifest is present
 
-Activation-failure log scanning and `code --status` boot checks are listed as follow-up work in the acceptance criteria below — they are useful but not part of the v1 harness.
+As of this PR the harness also scans the install log for activation-error patterns (`failed to activate`, `cannot activate`, `activation failed`) and fails the run if any appear. A deeper `code --status` boot check is still listed under Future work.
 
 Reproduces a real install pattern. Run locally:
 
@@ -59,9 +59,15 @@ This PR ships:
 
 Real assertions land when the build artifact pipeline (currently only `compile`, not `compile-extensions-build`) is in better shape — `compile-extensions-build` has the known gulp-vinyl-zip + Open VSX hang issue.
 
-## Acceptance criteria
+## In this PR
 
-- [ ] `run.sh` installs all extensions in `manifest.json` against a built Zeus
-- [ ] Asserts no activation failures in the log
-- [ ] CI workflow blocks merge on failure
-- [ ] Weekly cron catches upstream regressions in tracked extensions
+- [x] `run.sh` installs all extensions in `manifest.json` against a built Zeus
+- [x] Asserts no activation failures in the install log
+- [x] CI workflow (`.github/workflows/ext-import.yml`) blocks merge on failure
+- [x] Weekly cron in the same workflow catches upstream regressions in tracked extensions
+
+## Future work
+
+- `code --status` boot check after install, asserting no errors in the "Extension Host" section
+- Per-extension `--list-commands` sanity check (mentioned in *What "compatible" means*); requires a separate listing pass and isn't part of the v1 harness
+- Pick up CI a Playwright pass that drives one command per extension end-to-end (depends on the parallel browser-test workflow becoming green)

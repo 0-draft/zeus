@@ -77,15 +77,27 @@ INSTALLED="$("${ZEUS_BIN}" \
 echo "${INSTALLED}"
 
 for ext in "${EXTENSIONS[@]}"; do
-	# 'grep -F' treats the needle as a fixed string, so dots in
-	# extension IDs (e.g. 'golang.go') aren't wildcards. The '@'
-	# tail anchors at the version separator emitted by
-	# '--list-extensions --show-versions', and 'grep -i' keeps the
-	# case-insensitive match the listing uses.
-	if ! echo "${INSTALLED}" | grep -Fqi "${ext}@"; then
+	# Anchor the match at the start of a line so 'go@' can't
+	# accidentally hit 'some.other.go@<ver>' in the listing.
+	# We can't use 'grep -F' here because that disables anchors,
+	# so escape the regex-meaningful characters in the extension
+	# id (notably the '.') by hand before feeding to 'grep -E'.
+	PATTERN="$(printf '%s' "${ext}@" | sed 's/[][\\.*^$(){}+?|/]/\\&/g')"
+	if ! echo "${INSTALLED}" | grep -qiE "^${PATTERN}"; then
 		FAILURES+=("missing:${ext}")
 	fi
 done
+
+echo "==> Scanning install log for activation failures…"
+# The --install-extension path also reports activation errors that
+# happen during install; assert none appeared. Patterns chosen to
+# match vscode's own activation error messages.
+ACTIVATION_ERRORS="$(grep -iE 'failed to activate|cannot activate|activation failed' "${USER_DATA_DIR}/install.log" || true)"
+if [[ -n "${ACTIVATION_ERRORS}" ]]; then
+	echo "FAIL: activation errors in install log:" >&2
+	printf '%s\n' "${ACTIVATION_ERRORS}" >&2
+	exit 1
+fi
 
 if [[ ${#FAILURES[@]} -ne 0 ]]; then
 	echo "FAIL: extension(s) missing from --list-extensions:" >&2
