@@ -8,9 +8,9 @@ This is an example skill. Delete or replace as you set up `.zeus/` for your own 
 
 Scan recent edits for:
 
-- AWS access keys (`AKIA[0-9A-Z]{16}`)
+- AWS access keys (`\b(AKIA|ASIA)[A-Z0-9]{16}\b`)
 - Private key headers (`-----BEGIN.*PRIVATE KEY-----`)
-- GitHub tokens (`ghp_[0-9a-zA-Z]{36}`)
+- GitHub tokens (prefixes `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_`)
 - Long alphanumeric values assigned to `*_KEY` / `*_SECRET` / `*_TOKEN` variables
 
 When something matches, annotate the line and propose a `.env.example` placeholder.
