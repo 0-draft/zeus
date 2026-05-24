@@ -27,7 +27,7 @@ export default new class EnsureNoDisposablesAreLeakedInTestSuite implements esli
 
 		return {
 			[`Program > ExpressionStatement > CallExpression[callee.name='suite']`]: (node: estree.Node) => {
-				const src = context.getSourceCode().getText(node);
+				const src = context.sourceCode.getText(node);
 				if (!src.includes('ensureNoDisposablesAreLeakedInTestSuite(')) {
 					context.report({
 						node,
