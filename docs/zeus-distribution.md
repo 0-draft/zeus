@@ -65,7 +65,7 @@ A template lives at [`build/distribution/homebrew-cask.rb.template`](../build/di
 - `zeus` — the primary, unambiguous command. Always safe. Use this everywhere unless you have a specific reason not to
 - `z` — short alias. Drops into your `$PATH` after `zoxide` if you have both, so `which z` decides who wins; Homebrew will still install both symlinks. If you actively use `zoxide`, just keep typing `zeus` for the editor and let `z` belong to `zoxide`
 
-Users who only want one or the other can post-install with `brew unlink` or `brew install --cask --binary=zeus` (Homebrew honours the binary-name flag).
+Homebrew Cask has no per-binary selection flag, so users who don't want both symlinks have two supported paths: (1) install with `brew install --cask --no-binaries 0-draft/zeus/zeus` and then manually symlink whichever binary they want (e.g. `ln -s /Applications/Zeus.app/Contents/Resources/app/bin/z /opt/homebrew/bin/zeus`), or (2) let Homebrew install normally — if `z` is already owned by something else on the system, Homebrew links `zeus` and emits a warning for the `z` symlink, which is the typical outcome.
 
 ## Linux
 

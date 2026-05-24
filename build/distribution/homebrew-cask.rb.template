@@ -23,9 +23,11 @@ cask "zeus" do
   app "Zeus.app"
   # CLI surface: install both `zeus` (the unambiguous primary, won't
   # collide with zoxide / the legacy `z` shell function) and the short
-  # `z` alias for users who want it. Anyone already shadowing `z` can
-  # `brew install --cask --binary=zeus` after the fact, or just use
-  # `zeus` — the doc covers the choice.
+  # `z` alias for users who want it. If `z` is already taken on a
+  # user's system, Homebrew will link `zeus` and emit a warning for the
+  # `z` symlink — that's the documented fallback. Users who don't want
+  # any CLI symlinks at all can install with `--no-binaries` and create
+  # symlinks themselves.
   binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z", target: "zeus"
   binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z"
 
