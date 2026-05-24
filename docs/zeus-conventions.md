@@ -45,7 +45,7 @@ Frontmatter fields:
 
 - `name` (required): unique identifier within `.zeus/skills/`. Duplicates fail loading.
 - `description` (required): one-line summary used by the model to decide when to invoke the skill.
-- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. **Omitted** = no tools allowed (least-privilege default — the skill is read-only unless it explicitly opts in); **present but empty** = also no tools allowed; **present with names** = exactly those tools. Use `'*'` to mean "all tools" if you really want that.
+- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. **Omitted** = no tools allowed (least-privilege default — the skill is read-only unless it explicitly opts in); **present but empty** = also no tools allowed; **present with names** = exactly those tools. A literal `'*'` is **discouraged**: it bypasses the least-privilege guarantee and the loader logs a warning at startup naming each skill that uses it. Prefer listing the tools by name; use `'*'` only for skills you are sure should be able to call anything Zeus can.
 
 ## `.zeus/memory/`
 
@@ -66,9 +66,9 @@ Constitutional rules. Two sections:
 ## Hard rules
 
 - Never write secrets, tokens, or passwords back into a buffer.
-- Confirm before `rm -rf`, `DROP TABLE`, `git push --force`, `git push --force-with-lease`, or any destructive irreversible action.
+- Confirm before `rm -rf`, `DROP TABLE`, `git reset --hard`, `git push --force`, `git push --force-with-lease`, or any destructive irreversible action.
 - Do not auto-run database migrations. Generating them is fine; applying them requires explicit user approval.
-- Do not call write APIs against production URLs (e.g., `*.prod.*`, `app.example.com`) unless the user explicitly opts in for the session.
+- Do not call write APIs (`POST`, `PUT`, `PATCH`, `DELETE`) against production URLs (e.g., `*.prod.*`, `app.example.com`) unless the user explicitly opts in for the session.
 
 ## Soft preferences
 
