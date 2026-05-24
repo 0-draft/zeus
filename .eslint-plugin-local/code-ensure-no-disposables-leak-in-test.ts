@@ -20,7 +20,7 @@ export default new class EnsureNoDisposablesAreLeakedInTestSuite implements esli
 	create(context: eslint.Rule.RuleContext): eslint.Rule.RuleListener {
 		const config = context.options[0] as { exclude: string[] };
 
-		const needle = context.getFilename().replace(/\\/g, '/');
+		const needle = context.filename.replace(/\\/g, '/');
 		if (config.exclude.some((e) => needle.endsWith(e))) {
 			return {};
 		}
