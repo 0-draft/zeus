@@ -8,7 +8,7 @@ import _debounce from 'debounce';
 import { filter as _filter, rename } from './gulp/facade.ts';
 import path from 'path';
 import fs from 'fs';
-import _rimraf from 'rimraf';
+import { rimraf as _rimraf } from 'rimraf';
 import VinylFile from 'vinyl';
 import through from 'through';
 import sm from 'source-map';
@@ -297,12 +297,8 @@ export function rimraf(dir: string): () => Promise<void> {
 		let retries = 0;
 
 		const retry = () => {
-			_rimraf(dir, { maxBusyTries: 1 }, (err: any) => {
-				if (!err) {
-					return c();
-				}
-
-				if (err.code === 'ENOTEMPTY' && ++retries < 5) {
+			_rimraf(dir, { maxRetries: 1 }).then(() => c(), (err: any) => {
+				if (err && err.code === 'ENOTEMPTY' && ++retries < 5) {
 					return setTimeout(() => retry(), 10);
 				}
 
