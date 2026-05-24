@@ -19,7 +19,15 @@ interface IAgentRuntime {
   start(opts: AgentStartOptions): Promise<AgentHandle>;
   status(id: AgentId): Promise<AgentStatus>;
   cancel(id: AgentId): Promise<void>;
-  onEvent: Event<AgentEvent>;  // streaming tool-use / text events
+  // Each event carries the agent id so the parallel-agents view can
+  // route to the right tab.
+  onDidAgentEvent: Event<{ id: AgentId; event: AgentEvent }>;
+}
+
+// IDisposable so the parallel-agents view can release the SDK session
+// and any held MCP connections when the agent tab closes.
+interface AgentHandle extends IDisposable {
+  readonly id: AgentId;
 }
 ```
 
@@ -31,7 +39,7 @@ interface IAgentRuntime {
 - Tools: union of (a) MCP tools registered via the MCP client (`feat/mcp-client`) and (b) skill-declared `allowed-tools` (whitelist)
 - Memory: `.zeus/memory/**` injected at session start
 - Constitutional: `.zeus/policy.md` hard rules as system prompt append
-- Model: `IConfigurationService` setting `zeus.ai.model` (default `claude-sonnet-4-5`)
+- Model: `IConfigurationService` setting `zeus.ai.model` (default `claude-sonnet-4-6`, Anthropic's current Sonnet)
 - Credentials: secret storage (`vscode.SecretStorage`), keyed per provider
 
 Everything except credentials is in git.
