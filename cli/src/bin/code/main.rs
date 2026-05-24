@@ -104,7 +104,7 @@ async fn main() -> Result<(), std::convert::Infallible> {
 				serve_web::serve_web(context!(), sw_args).await
 			}
 
-			Some(args::Commands::Mcp(mcp_args)) => mcp::mcp(mcp_args).await,
+			Some(args::Commands::Mcp(mcp_args)) => mcp::mcp(context!(), mcp_args).await,
 
 			Some(args::Commands::Agent(agent_args)) => match agent_args.subcommand {
 				Some(args::AgentSubcommand::Ps(ps_args)) => {

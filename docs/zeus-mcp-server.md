@@ -44,7 +44,7 @@ Detailed schemas land alongside the implementation PR.
 
 MCP over stdio inherits the calling process's permissions; no extra auth.
 
-MCP over SSE binds to `127.0.0.1` only by default and requires a bearer token printed to stdout on start (`zeus mcp --transport sse` prints `Token: ...` to stderr). Binding to non-loopback requires `--bind 0.0.0.0` and is gated by a confirmation flag.
+MCP over SSE binds to `127.0.0.1` only by default and requires a bearer token printed on **stderr** on start (`Token: ...`). Stdout is reserved for protocol traffic on the stdio transport, and we keep stderr consistent across transports. Binding to non-loopback (`--bind 0.0.0.0`, a LAN IP, etc.) additionally requires `--allow-non-loopback` as a confirmation flag.
 
 ## Workspace isolation
 

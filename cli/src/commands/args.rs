@@ -203,9 +203,21 @@ pub struct McpArgs {
 	pub transport: McpTransport,
 
 	/// Port to bind to when --transport=sse. 0 (default) picks an
-	/// ephemeral port; the chosen port is printed on startup.
+	/// ephemeral port; the chosen port is printed on stderr at startup.
 	#[clap(long, default_value_t = 0)]
 	pub port: u16,
+
+	/// Interface to bind on when --transport=sse. Defaults to `127.0.0.1`
+	/// (loopback). Binding to a non-loopback interface (`0.0.0.0`, a LAN
+	/// IP, etc.) also requires `--allow-non-loopback` to confirm intent.
+	#[clap(long, default_value = "127.0.0.1")]
+	pub bind: String,
+
+	/// Acknowledge that binding the SSE transport to a non-loopback
+	/// interface is intentional. Required whenever `--bind` is set to
+	/// anything other than `127.0.0.1`/`localhost`/`::1`.
+	#[clap(long)]
+	pub allow_non_loopback: bool,
 
 	/// Workspace root. Defaults to the current working directory. The
 	/// server refuses operations on paths outside this root.
