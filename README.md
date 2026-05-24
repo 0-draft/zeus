@@ -1,27 +1,24 @@
 # Zeus
 
-A fork of [`microsoft/vscode`](https://github.com/microsoft/vscode) (`Code - OSS`), MIT licensed.
+MCP-first code editor, built on a VS Code fork.
 
-## Status
+- Fork of [`microsoft/vscode`](https://github.com/microsoft/vscode) (`Code - OSS`), MIT
+- Default extension gallery: [Open VSX](https://open-vsx.org)
+- Release command name: `z`
+- VS Code extensions install unmodified
 
-Day 1. `package.json` / `product.json` / `cli/Cargo.toml` are renamed to Zeus; placeholder icon and Open VSX gallery wired up. Most differentiating work is not yet done.
+Active work toward MCP-first: Zeus exposes itself as an MCP server, consumes external MCP servers, and ships `.zeus/` conventions (skills / memory / policy / `mcp.json`) so AI behavior is git-shared. The integration is in flight across the [open PRs](https://github.com/0-draft/zeus/pulls); design lives under [`docs/`](docs/).
 
-## Building from source
-
-Zeus inherits VS Code's build system. Until Zeus-specific build docs exist, the upstream [How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute) wiki is the reference.
+## Building
 
 ```bash
 npm install
 npm run watch
-./scripts/z.sh      # macOS / Linux (alias of code.sh)
+./scripts/z.sh
 ```
 
-Release builds expose the editor on `PATH` as `z`.
-
-Node version is pinned in `.nvmrc` (currently `22.22.1`).
+Node is pinned to `.nvmrc` (currently `22.22.1`).
 
 ## License
 
-MIT. See [`LICENSE.txt`](LICENSE.txt).
-
-Zeus is a derivative work of `Code - OSS` © Microsoft Corporation, also under MIT.
+MIT. See [`LICENSE.txt`](LICENSE.txt). Zeus is a derivative work of `Code - OSS` © Microsoft Corporation, also under MIT.
