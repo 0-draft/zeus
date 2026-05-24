@@ -11,9 +11,11 @@ This is positioned directly against Cursor's credit model, which most users desc
 ```
 
 - **`⚡ N agents`**: number of currently-running subagents. Clickable → opens parallel-agents view
-- **`X% cache`**: rolling cache hit ratio over the last 100 requests. The 100-entry window is persisted alongside the day's cost record in `IStorageService.APPLICATION` (key `zeus.ai.cache.window`) so the ratio survives editor restarts; otherwise it would read `0%` for the first call after every relaunch, which is more misleading than helpful
+- **`X% cache`**: rolling cache hit ratio over the last 100 requests. State (window + day totals) lives on the singleton **main-process** service `IAiCostService`, not directly in `IStorageService`, so multiple workbench windows opened against different workspaces stay consistent. The main process persists snapshots to `IStorageService.APPLICATION` (key `zeus.ai.cache.window`) once a second so a hard kill doesn't lose more than ~1s of data. Renderer windows subscribe to the service over IPC.
 - **`$X.XXX`**: cost of the most recent AI call
 - **`$X.XX today`**: cumulative cost for the local day (resets midnight)
+
+All visible strings (`agents`, `cache`, `today`) ship through `nls.localize` so translations land alongside other UI localisation. The currency symbol and decimal separator are formatted via `Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' })`, with a setting `zeus.ai.hud.currency` to override the display currency for users whose Anthropic billing is in another currency.
 
 Hovering over each segment shows a tooltip with the breakdown (input tokens / output tokens / cached tokens / cost per million).
 
@@ -21,7 +23,7 @@ Hovering over each segment shows a tooltip with the breakdown (input tokens / ou
 
 - Live agent count: `IAgentRuntime` event stream (`feat/agent-sdk`)
 - Per-call cost and cache state: Anthropic SDK `usage` field, mapped to current model pricing
-- Today's cumulative: persisted to `IStorageService` **`APPLICATION`** (per-user, cross-workspace) scope under a single key `zeus.ai.cost` holding `{ date: "YYYY-MM-DD", total: number }`. Application scope (not workspace) because the user's per-day spend should not reset when switching between workspaces — the goal is to surface real cost, not per-project cost. When local midnight passes, the record is reset before the next write, so storage doesn't grow per day. A future `zeus.ai.hud.scope` setting can flip it to `WORKSPACE` if a user wants per-project tracking.
+- Today's cumulative: owned by the `IAiCostService` singleton in the **main process** (ensures atomic updates across all open workbench windows — `IStorageService` writes from concurrent renderers would race and silently lose updates). The main process snapshots the state to `IStorageService.APPLICATION` (per-user, cross-workspace) under key `zeus.ai.cost` holding `{ date: "YYYY-MM-DD", total: number }`. Application scope (not workspace) because the user's per-day spend should not reset when switching between workspaces — the goal is to surface real cost, not per-project cost. When local midnight passes, the record is reset before the next write, so storage doesn't grow per day. A future `zeus.ai.hud.scope` setting can flip it to `WORKSPACE` if a user wants per-project tracking.
 
 ## Configuration
 
@@ -42,7 +44,7 @@ Hard credit caps are what makes Cursor frustrating. Zeus shows the number; the u
 - [ ] Hover tooltip shows token / cost breakdown
 - [ ] `today` value persists across editor restarts in the same local day
 - [ ] Setting `zeus.ai.hud.enabled = false` hides the item entirely
-- [ ] Pricing table lives in a bundled JSON file (`src/vs/workbench/contrib/aiHud/common/anthropicPricing.json`) shipped with the build. Updated by a dependabot-style PR when the upstream price page changes — see `script/refresh-pricing.mjs`. The HUD never makes a live network call for pricing on a hot path (latency + offline). At process start, if the cached file is older than 30 days, the HUD logs a warning to the developer console suggesting a Zeus update; the user-visible numbers continue to use the bundled table.
+- [ ] Pricing table lives in a bundled JSON file (`src/vs/workbench/contrib/aiHud/common/anthropicPricing.json`) shipped with the build. Updated by a dependabot-style PR when the upstream price page changes — see `script/refresh-pricing.mjs`. The HUD never makes a live network call for pricing on a hot path (latency + offline). If the file is older than 30 days the HUD shows a small `⚠` glyph next to the cost segment and the tooltip says `"Pricing data from {date}; estimates may be stale — update Zeus"`. The user-visible numbers continue to use the bundled table; the warning is visible because the transparency goal of this feature is broken if users silently look at outdated estimates.
 
 ## Status
 
