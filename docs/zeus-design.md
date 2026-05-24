@@ -12,28 +12,28 @@ This is the design pass plan. Implementation is incremental; each section below 
 
 ## Typography
 
-Per-OS native monospace stack:
+Monospace stack — OS-native first, JetBrains Mono (bundled with the app) as the cross-platform safety net:
 
 | OS | Primary | Fallback |
 |---|---|---|
-| macOS | SF Mono | Menlo |
-| Windows | Cascadia Code | Consolas |
+| macOS | SF Mono | JetBrains Mono (bundled), Menlo |
+| Windows | Cascadia Code | JetBrains Mono (bundled), Consolas |
 | Linux | Ubuntu Mono | JetBrains Mono (bundled), Hack, DejaVu Sans Mono |
 
 UI font (chrome, not the editor):
 
 - macOS: SF Pro Text → SF Pro Display for large headings
 - Windows: Segoe UI Variable
-- Linux: system UI font → Inter (bundled fallback) → system
+- Linux: Inter (bundled) → system UI font
 
-JetBrains Mono (monospace) and Inter (UI) are bundled with the app so the experience stays consistent even when system fonts are unusual or non-Latin glyph coverage is missing.
+JetBrains Mono (monospace) and Inter (UI) are bundled with the app so the experience stays consistent even when system fonts are unusual or non-Latin glyph coverage is missing. Bundled fonts sit one rung down from the OS-native primary so users who prefer their system font don't have it overridden silently — but on a fresh Linux desktop or a Windows machine without Cascadia, the bundled face still wins over a generic fallback.
 
 ## Motion
 
 VS Code is mostly static. Zeus adds motion only where it earns its place:
 
 - **Focus change**: 120ms ease-out on the cursor blob position (caret carry effect)
-- **Command palette open**: 80ms fade-in with 4px translateY; never bounces
+- **Command palette open**: 120ms fade-in with 4px translateY; never bounces (matches the focus-change duration above for visual consistency, and is long enough to read as a transition on 60Hz panels)
 - **Save**: 200ms checkmark pulse on the status bar item, no modal
 - **Agent completion**: brief glow on the parallel-agents status item, no sound
 - **No transitions on tab switch** — too high frequency, motion gets in the way
@@ -72,7 +72,7 @@ Today's VS Code status bar is a tag soup. Zeus groups it:
 
 Each cluster has its own visual treatment. Middle cluster is Zeus-specific. The `[ ⚠ N ]` chip is the existing vscode Problems indicator (errors + warnings count) pulled out of the right cluster so it sits next to the AI HUD — putting "the editor's diagnostics" and "the AI's diagnostics" side by side makes the relationship obvious.
 
-The cost segment (`$0.41`) is configurable via `zeus.ai.hud.enabled` from [`docs/zeus-prompt-cache-hud.md`](zeus-prompt-cache-hud.md) — users who don't want a live "ticker" can hide it without losing the rest of the HUD.
+The cost segment (`$0.41`) is configurable via the `zeus.ai.hud.enabled` setting — users who don't want a live "ticker" can hide it without losing the rest of the HUD. The detailed HUD design (cache window, pricing source, persisted state) lands with `feat/prompt-cache-hud` (#28); once both PRs are merged this paragraph will link to `docs/zeus-prompt-cache-hud.md`.
 
 ## Density modes
 
