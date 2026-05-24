@@ -21,8 +21,12 @@ cask "zeus" do
   homepage "https://github.com/0-draft/zeus"
 
   app "Zeus.app"
-  # CLI: 'z' on PATH. Lives inside the app bundle. zoxide users will
-  # need to alias one of the two; documented in zeus-distribution.md.
+  # CLI surface: install both `zeus` (the unambiguous primary, won't
+  # collide with zoxide / the legacy `z` shell function) and the short
+  # `z` alias for users who want it. Anyone already shadowing `z` can
+  # `brew install --cask --binary=zeus` after the fact, or just use
+  # `zeus` — the doc covers the choice.
+  binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z", target: "zeus"
   binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z"
 
   zap trash: [

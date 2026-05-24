@@ -28,6 +28,7 @@ cask "zeus" do
   homepage "https://github.com/0-draft/zeus"
 
   app "Zeus.app"
+  binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z", target: "zeus"
   binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z"
 
   zap trash: [
@@ -41,7 +42,8 @@ cask "zeus" do
     "~/Library/Preferences/com.0draft.zeus.plist",
     "~/Library/Saved Application State/com.0draft.zeus.savedState",
     "~/Library/WebKit/com.0draft.zeus",
-    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl3"
+    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl3",
+    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl2"
   ]
 end
 ```
@@ -58,12 +60,12 @@ A template lives at [`build/distribution/homebrew-cask.rb.template`](../build/di
 
 ### `zoxide` collision
 
-`zoxide` uses `z` as its primary command. Release-install notes will need to call this out:
+`zoxide` and the legacy [`z`](https://github.com/rupa/z) shell script both expect to own the `z` command. Zeus dual-installs:
 
-- If you actively use `zoxide`, alias Zeus's `z` to something else: `alias zc=z`
-- Or rename Zeus's exposed binary at install time (configurable via `applicationName` override)
+- `zeus` — the primary, unambiguous command. Always safe. Use this everywhere unless you have a specific reason not to
+- `z` — short alias. Drops into your `$PATH` after `zoxide` if you have both, so `which z` decides who wins; Homebrew will still install both symlinks. If you actively use `zoxide`, just keep typing `zeus` for the editor and let `z` belong to `zoxide`
 
-This is documented but not auto-resolved on install.
+Users who only want one or the other can post-install with `brew unlink` or `brew install --cask --binary=zeus` (Homebrew honours the binary-name flag).
 
 ## Linux
 
