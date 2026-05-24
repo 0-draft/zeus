@@ -8,7 +8,7 @@ Anything in this directory is shared with the project's AI. Treat it like docume
 
 - **What this project is**: (one or two sentences)
 - **Where to start reading the code**: (a path or two)
-- **Conventions worth knowing**: (link to `conventions.md` if you make one)
+- **Conventions worth knowing**: [`docs/zeus-conventions.md`](../../docs/zeus-conventions.md)
 
 ## Recent decisions
 
