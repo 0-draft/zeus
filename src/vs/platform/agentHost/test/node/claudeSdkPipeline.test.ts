@@ -81,6 +81,7 @@ class ImmediatelyDoneQuery implements Query {
 	getServerInfo(): never { throw new Error('not modeled'); }
 	getMcpResources(): never { throw new Error('not modeled'); }
 	readMcpResource(): never { throw new Error('not modeled'); }
+	async [Symbol.asyncDispose](): Promise<void> { /* not exercised here */ }
 }
 
 // ===== Harness =====
