@@ -18,7 +18,7 @@ Per-OS native monospace stack:
 |---|---|---|
 | macOS | SF Mono | Menlo |
 | Windows | Cascadia Code | Consolas |
-| Linux | JetBrains Mono | Hack, DejaVu Sans Mono |
+| Linux | Ubuntu Mono | JetBrains Mono (bundled), Hack, DejaVu Sans Mono |
 
 UI font (chrome, not the editor):
 
@@ -70,11 +70,15 @@ Today's VS Code status bar is a tag soup. Zeus groups it:
   ↑ left: git / project           ↑ middle: AI HUD       ↑ right: editor state
 ```
 
-Each cluster has its own visual treatment. Middle cluster is Zeus-specific.
+Each cluster has its own visual treatment. Middle cluster is Zeus-specific. The cost segment (`$0.41`) is configurable via `zeus.ai.hud.enabled` from [`docs/zeus-prompt-cache-hud.md`](zeus-prompt-cache-hud.md) — users who don't want a live "ticker" can hide it without losing the rest of the HUD.
 
 ## Density modes
 
-Three density presets via `zeus.ui.density`: `comfortable` (default), `compact`, `cozy`. Comfortable is taller than VS Code's default; compact matches it.
+Three density presets via `zeus.ui.density`, in descending order from tallest to most compact:
+
+- `comfortable` (default, tallest) — extra vertical breathing room vs VS Code
+- `cozy` (intermediate) — between `comfortable` and `compact`
+- `compact` — matches VS Code's default density
 
 ## Open questions
 
