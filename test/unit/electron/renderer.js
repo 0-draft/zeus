@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-/*eslint-env mocha*/
+/* global describe, it, before, after, beforeEach, afterEach, suite, test, setup, teardown, suiteSetup, suiteTeardown */
 
 // @ts-check
 
