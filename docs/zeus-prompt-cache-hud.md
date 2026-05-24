@@ -11,7 +11,7 @@ This is positioned directly against Cursor's credit model, which most users desc
 ```
 
 - **`⚡ N agents`**: number of currently-running subagents. Clickable → opens parallel-agents view
-- **`X% cache`**: rolling cache hit ratio over the last 100 requests
+- **`X% cache`**: rolling cache hit ratio over the last 100 requests. The 100-entry window is persisted alongside the day's cost record in `IStorageService.APPLICATION` (key `zeus.ai.cache.window`) so the ratio survives editor restarts; otherwise it would read `0%` for the first call after every relaunch, which is more misleading than helpful
 - **`$X.XXX`**: cost of the most recent AI call
 - **`$X.XX today`**: cumulative cost for the local day (resets midnight)
 
@@ -27,7 +27,7 @@ Hovering over each segment shows a tooltip with the breakdown (input tokens / ou
 
 - `zeus.ai.hud.enabled` (default: `true`) — show the HUD at all
 - `zeus.ai.hud.detail` (`"compact" | "verbose"`) — controls the format
-- `zeus.ai.hud.todayLimit` (number | null) — soft cap; turns the cost segment red when exceeded, no enforcement
+- `zeus.ai.hud.todayLimit` (number | null) — soft cap in USD (matches the units shown in the status bar); turns the cost segment red when exceeded, no enforcement. `null` disables the colouring.
 
 The HUD is implemented as **multiple adjacent `StatusBarItem`s** (agents, cache, cost, today). VS Code's `StatusBarItem` API does not support per-segment coloring inside a single item, so the colored "over limit" treatment lives on its own item.
 
@@ -42,7 +42,7 @@ Hard credit caps are what makes Cursor frustrating. Zeus shows the number; the u
 - [ ] Hover tooltip shows token / cost breakdown
 - [ ] `today` value persists across editor restarts in the same local day
 - [ ] Setting `zeus.ai.hud.enabled = false` hides the item entirely
-- [ ] Pricing table lives in code, not over the network (no live pricing fetch)
+- [ ] Pricing table lives in a bundled JSON file (`src/vs/workbench/contrib/aiHud/common/anthropicPricing.json`) shipped with the build. Updated by a dependabot-style PR when the upstream price page changes — see `script/refresh-pricing.mjs`. The HUD never makes a live network call for pricing on a hot path (latency + offline). At process start, if the cached file is older than 30 days, the HUD logs a warning to the developer console suggesting a Zeus update; the user-visible numbers continue to use the bundled table.
 
 ## Status
 

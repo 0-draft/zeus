@@ -9,7 +9,10 @@ import * as assert from 'assert';
 import { McpStdioStateHandler } from '../../node/mcpStdioStateHandler.js';
 import { isWindows } from '../../../../../base/common/platform.js';
 
-const GRACE_TIME = 100;
+// 250ms gives the child enough time on slow CI runners to handle SIGTERM
+// and flush stdout before the parent escalates to SIGKILL. 100ms was
+// racy on Linux containers under load.
+const GRACE_TIME = 250;
 
 suite('McpStdioStateHandler', () => {
 	const store = ensureNoDisposablesAreLeakedInTestSuite();
@@ -53,12 +56,7 @@ suite('McpStdioStateHandler', () => {
 		assert.strictEqual(result.trim(), 'Data received: Hello MCP!');
 	});
 
-	// FLAKY-ON-CI(zeus#28): child process can exit before its
-	// post-SIGTERM stdout flush lands, so the test sees 'stdin ended'
-	// only and not 'stdin ended\nSIGTERM received'. Skipped on CI
-	// until the upstream subprocess flush race is fixed; tracked so
-	// this doesn't silently rot.
-	if (!isWindows && !process.env.CI) {
+	if (!isWindows) {
 		test('sigterm after grace', async () => {
 			const { handler, output } = run(`
 			setInterval(() => {}, 1000);
