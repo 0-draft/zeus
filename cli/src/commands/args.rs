@@ -208,14 +208,16 @@ pub struct McpArgs {
 	pub port: u16,
 
 	/// Interface to bind on when --transport=sse. Defaults to `127.0.0.1`
-	/// (loopback). Binding to a non-loopback interface (`0.0.0.0`, a LAN
-	/// IP, etc.) also requires `--allow-non-loopback` to confirm intent.
+	/// (loopback). Only IP literals are accepted — pass `127.0.0.1` /
+	/// `::1` for loopback, not `localhost`. Binding to a non-loopback
+	/// interface (`0.0.0.0`, a LAN IP, etc.) also requires
+	/// `--allow-non-loopback` to confirm intent.
 	#[clap(long, default_value = "127.0.0.1")]
-	pub bind: String,
+	pub bind: std::net::IpAddr,
 
 	/// Acknowledge that binding the SSE transport to a non-loopback
 	/// interface is intentional. Required whenever `--bind` is set to
-	/// anything other than `127.0.0.1`/`localhost`/`::1`.
+	/// anything other than `127.0.0.1` / `::1`.
 	#[clap(long)]
 	pub allow_non_loopback: bool,
 
