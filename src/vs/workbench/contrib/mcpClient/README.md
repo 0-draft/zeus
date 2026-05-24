@@ -1,6 +1,6 @@
 # `mcpClient` contribution
 
-Slot for the built-in MCP client. Design lives at [`docs/zeus-mcp-client.md`](../../../../../../docs/zeus-mcp-client.md).
+Slot for the built-in MCP client. Design lives at [`docs/zeus-mcp-client.md`](../../../../../docs/zeus-mcp-client.md).
 
 When the real implementation lands, this directory will contain:
 
