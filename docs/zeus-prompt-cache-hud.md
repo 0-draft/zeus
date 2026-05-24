@@ -21,7 +21,7 @@ Hovering over each segment shows a tooltip with the breakdown (input tokens / ou
 
 - Live agent count: `IAgentRuntime` event stream (`feat/agent-sdk`)
 - Per-call cost and cache state: Anthropic SDK `usage` field, mapped to current model pricing
-- Today's cumulative: persisted to `IStorageService` workspace scope under a single key `zeus.ai.cost` holding `{ date: "YYYY-MM-DD", total: number }`. When local midnight passes, the record is reset before the next write, so storage doesn't grow per day.
+- Today's cumulative: persisted to `IStorageService` **`APPLICATION`** (per-user, cross-workspace) scope under a single key `zeus.ai.cost` holding `{ date: "YYYY-MM-DD", total: number }`. Application scope (not workspace) because the user's per-day spend should not reset when switching between workspaces — the goal is to surface real cost, not per-project cost. When local midnight passes, the record is reset before the next write, so storage doesn't grow per day. A future `zeus.ai.hud.scope` setting can flip it to `WORKSPACE` if a user wants per-project tracking.
 
 ## Configuration
 
