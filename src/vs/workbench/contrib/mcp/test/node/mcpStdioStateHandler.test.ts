@@ -9,10 +9,11 @@ import * as assert from 'assert';
 import { McpStdioStateHandler } from '../../node/mcpStdioStateHandler.js';
 import { isWindows } from '../../../../../base/common/platform.js';
 
-// 250ms gives the child enough time on slow CI runners to handle SIGTERM
-// and flush stdout before the parent escalates to SIGKILL. 100ms was
-// racy on Linux containers under load.
-const GRACE_TIME = 250;
+// 1000ms gives the child enough time on slow CI runners to handle
+// SIGTERM and flush stdout before the parent escalates to SIGKILL. 100ms
+// was racy on Linux containers; 250ms still tripped under load. The
+// test's `delay >= GRACE_TIME` assertion still scales correctly.
+const GRACE_TIME = 1000;
 
 suite('McpStdioStateHandler', () => {
 	const store = ensureNoDisposablesAreLeakedInTestSuite();
