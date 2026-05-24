@@ -422,65 +422,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a822ea5bc7590f9d40f1ba12c0dc3c2760f3482c6984db1573ad11031420831"
 
 [[package]]
-name = "zeus-cli"
-version = "0.1.0"
-dependencies = [
- "ahp",
- "ahp-types",
- "ahp-ws",
- "base64",
- "bytes",
- "cfg-if",
- "clap",
- "clap_lex",
- "console",
- "const_format",
- "core-foundation",
- "dialoguer",
- "dirs 5.0.1",
- "flate2",
- "futures",
- "gethostname",
- "http",
- "http-body-util",
- "hyper",
- "hyper-util",
- "indicatif",
- "jiff",
- "keyring",
- "libc",
- "local-ip-address",
- "log",
- "open",
- "pin-project",
- "rand 0.8.6",
- "regex",
- "reqwest",
- "rmp-serde",
- "serde",
- "serde_bytes",
- "serde_json",
- "sha2",
- "shell-escape",
- "sysinfo",
- "tar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "tokio-util",
- "tunnels",
- "url",
- "uuid",
- "winapi",
- "windows-sys 0.61.2",
- "winreg 0.56.0",
- "winresource",
- "zbus",
- "zip",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2189,18 +2130,18 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "pin-project"
-version = "1.1.10"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "677f1add503faace112b9f1373e43e9e054bfdd22ff1a63c1bc485eaec6a6a8a"
+checksum = "2466b2336ed02bcdca6b294417127b90ec92038d1d5c4fbeac971a922e0e0924"
 dependencies = [
  "pin-project-internal",
 ]
 
 [[package]]
 name = "pin-project-internal"
-version = "1.1.10"
+version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e918e4ff8c4549eb882f14b3a4bc8c8bc93de829416eacf579f1207a8fbf861"
+checksum = "c96395f0a926bc13b1c17622aaddda1ecb55d49c8f1bf9777e4d877800a43f8b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4183,6 +4124,65 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.115",
+]
+
+[[package]]
+name = "zeus-cli"
+version = "0.1.0"
+dependencies = [
+ "ahp",
+ "ahp-types",
+ "ahp-ws",
+ "base64",
+ "bytes",
+ "cfg-if",
+ "clap",
+ "clap_lex",
+ "console",
+ "const_format",
+ "core-foundation",
+ "dialoguer",
+ "dirs 5.0.1",
+ "flate2",
+ "futures",
+ "gethostname",
+ "http",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "indicatif",
+ "jiff",
+ "keyring",
+ "libc",
+ "local-ip-address",
+ "log",
+ "open",
+ "pin-project",
+ "rand 0.8.6",
+ "regex",
+ "reqwest",
+ "rmp-serde",
+ "serde",
+ "serde_bytes",
+ "serde_json",
+ "sha2",
+ "shell-escape",
+ "sysinfo",
+ "tar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "tokio-util",
+ "tunnels",
+ "url",
+ "uuid",
+ "winapi",
+ "windows-sys 0.61.2",
+ "winreg 0.56.0",
+ "winresource",
+ "zbus",
+ "zip",
 ]
 
 [[package]]
