@@ -9,20 +9,22 @@ This is the deliberate counter-positioning vs Cursor 3 / Antigravity 2.0 / Winds
 A **side bar view** (not the activity bar's first slot, not the editor center). Closeable. Reopen via command palette.
 
 ```text
-┌─ Editor (primary surface) ──────────────────────────────────┐
-│                                                              │
-│   user code, just like vscode                                │
-│                                                              │
-├─ Status bar (always visible) ────────────────────────────────┤
-│  ⚡ 2 agents running · $0.41 today · cache: 92% hit          │
-└──────────────────────────────────────────────────────────────┘
-        ↑ click status item → opens side bar view ↓
-┌─ Parallel agents view (collapsible side bar) ───────────────┐
-│  ▶ docs-writer       streaming…   tool: read_file           │
-│  ▶ test-writer       waiting on tool approval               │
-│  ▼ security-reviewer  done · 3 findings                      │
-│       findings.md modified                                   │
-└──────────────────────────────────────────────────────────────┘
+┌──┬───────────────────────────┬─ Parallel agents view ──────────┐
+│  │                           │  ▶ docs-writer    streaming…    │
+│A │   Editor (primary)        │     tool: read_file             │
+│c │   user code, just like    │  ▶ test-writer    waiting on    │
+│t │   vscode                  │     tool approval               │
+│iv│                           │  ▼ security-reviewer  done ·    │
+│it│                           │      3 findings                 │
+│y │                           │      findings.md modified       │
+│  │                           │                                 │
+├──┴───────────────────────────┴─────────────────────────────────┤
+│ Status bar  ⚡ 2 agents running · $0.41 today · cache: 92% hit │
+└────────────────────────────────────────────────────────────────┘
+   ↑ status item is always visible; clicking it focuses the
+     side-bar view (right-side panel by default, draggable to
+     left). The status bar sits at the bottom — below both the
+     editor and the side bar — per vscode's workbench layout.
 ```
 
 ## Behavior
