@@ -27,13 +27,13 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 
 ## Files
 
-- `files.autoSave`: `off` → **`afterDelay`** (1s)
-  - Why: every junior dev's first complaint is "I lost my work." Auto-save is standard in 2026.
-  - Trade-off: users who script around `onDidSaveDocument` need to know files save themselves. Documented in release notes.
+- `files.autoSave`: `off` → **`onFocusChange`**
+  - Why: every junior dev's first complaint is "I lost my work." `onFocusChange` saves on context switch (tab away, terminal focus, palette open) — strictly safer than `off` without the rearrange-while-typing problem `afterDelay` has when combined with `formatOnSave`.
+  - Trade-off: writes to disk happen at focus boundaries, slightly later than `afterDelay` but earlier than `onWindowChange`.
 - `files.trimTrailingWhitespace`: `false` → **`true`**
 - `files.insertFinalNewline`: `false` → **`true`**
-- `files.eol`: `auto` → **`\n`**
-  - Trade-off: Windows-native devs may want `\r\n`. Setting is preserved so they can override.
+- `files.eol`: `auto` → **`auto`** (keep VS Code's default)
+  - Why: cross-platform / Windows-native repos that mix CRLF need this. Pinning to `\n` here would silently rewrite `.bat`, PowerShell scripts, and legacy Windows-CRLF files when saved. Project-level `.editorconfig` is the right place to enforce `\n` per repo.
 
 ## Editor
 
@@ -44,7 +44,7 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 - `editor.linkedEditing`: `false` → **`true`**
 - `editor.bracketPairColorization.enabled`: `true` → **`true`** (keep)
 - `editor.guides.bracketPairs`: `false` → **`"active"`**
-- `editor.fontFamily`: VS Code default → **OS-native monospace stack** (SF Mono on mac, Cascadia Code on Windows, system on Linux)
+- `editor.fontFamily`: VS Code default → **OS-native monospace stack** (SF Mono on macOS, Cascadia Code on Windows, `monospace` on Linux — fontconfig resolves it to the system's preferred fixed-width family)
   - Why: VS Code defaults to Consolas / Menlo. Modern OS-native looks better in 2026.
 
 ## Terminal
@@ -59,7 +59,8 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 ## Git
 
 - `git.autofetch`: `false` → **`true`**
-- `git.confirmSync`: `true` → **`false`** (just sync; if a user wants confirmation, they get a notification on first sync rather than every time)
+- `git.confirmSync`: `true` → **`true`** (keep)
+  - Why: "Sync Changes" pushes and pulls in one shot, so a stray click can publish unfinished work. The confirmation is one extra return key but is what stops a category of accidents. We optimize for safety here, not for one fewer keystroke.
 
 ## AI defaults (Zeus-specific)
 
