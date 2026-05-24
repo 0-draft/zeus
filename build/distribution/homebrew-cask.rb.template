@@ -1,0 +1,33 @@
+# Template for the Zeus Homebrew Cask.
+#
+# Lives in a separate tap repo (`0-draft/homebrew-zeus`, file
+# `Casks/zeus.rb`) because Homebrew taps must be named `homebrew-*`.
+#
+# At release time, the build script substitutes:
+#   {{VERSION}}      — the release tag without the leading `v` (e.g. 0.0.1)
+#   {{SHA256_ARM}}   — sha256 of Zeus-{version}-arm64.dmg
+#   {{SHA256_INTEL}} — sha256 of Zeus-{version}-x86_64.dmg
+
+cask "zeus" do
+  arch arm: "arm64", intel: "x86_64"
+
+  version "{{VERSION}}"
+  sha256 arm:   "{{SHA256_ARM}}",
+         intel: "{{SHA256_INTEL}}"
+
+  url "https://github.com/0-draft/zeus/releases/download/v#{version}/Zeus-#{version}-#{arch}.dmg",
+      verified: "github.com/0-draft/zeus/"
+  name "Zeus"
+  desc "MCP-first code editor built on VS Code"
+  homepage "https://github.com/0-draft/zeus"
+
+  app "Zeus.app"
+
+  zap trash: [
+    "~/Library/Application Support/Zeus",
+    "~/Library/Preferences/com.0draft.zeus.plist",
+    "~/Library/Saved Application State/com.0draft.zeus.savedState",
+    "~/.zeus",
+    "~/.zeus-shared"
+  ]
+end
