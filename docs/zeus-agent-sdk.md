@@ -18,7 +18,6 @@ Day 1 ships only Anthropic. To avoid betting the editor on a single vendor, the 
 interface IAgentRuntime {
   start(opts: AgentStartOptions): Promise<AgentHandle>;
   status(id: AgentId): Promise<AgentStatus>;
-  cancel(id: AgentId): Promise<void>;
   // Each event carries the agent id so the parallel-agents view can
   // route to the right tab.
   onDidAgentEvent: Event<{ id: AgentId; event: AgentEvent }>;
@@ -26,6 +25,13 @@ interface IAgentRuntime {
 
 // IDisposable so the parallel-agents view can release the SDK session
 // and any held MCP connections when the agent tab closes.
+//
+// Disposing the handle is the cancel path: it aborts any in-flight tool
+// call, tears down the SDK session, and emits a final
+// `{ type: 'cancelled' }` event before the listener is detached. There
+// is intentionally no separate `IAgentRuntime.cancel(id)` — having two
+// shutdown channels invites races where one path runs without the
+// other.
 interface AgentHandle extends IDisposable {
   readonly id: AgentId;
 }
@@ -36,7 +42,7 @@ interface AgentHandle extends IDisposable {
 ## Where settings come from
 
 - System prompt: `.zeus/skills/<skill>.md` body (frontmatter trimmed)
-- Tools: union of (a) MCP tools registered via the MCP client (`feat/mcp-client`) and (b) skill-declared `allowed-tools` (whitelist)
+- Tools: the agent session sees the set of MCP tools registered via the MCP client (`feat/mcp-client`), **filtered** by the skill's `allowed-tools` whitelist. Omitted = no tools. The two lists are never unioned: a tool the skill doesn't list is not callable even if some MCP server registered it.
 - Memory: `.zeus/memory/**` injected at session start
 - Constitutional: `.zeus/policy.md` hard rules as system prompt append
 - Model: `IConfigurationService` setting `zeus.ai.model` (default `claude-sonnet-4-6`, Anthropic's current Sonnet)
