@@ -15,8 +15,8 @@ import * as pluginCopilotLocal from './extensions/copilot/.eslintplugin/index.ts
 import pluginImport from 'eslint-plugin-import';
 import pluginJsdoc from 'eslint-plugin-jsdoc';
 
-import pluginHeader from 'eslint-plugin-header';
-pluginHeader.rules.header.meta.schema = false;
+// eslint-plugin-header is unmaintained against ESLint 9 (still calls
+// context.getSourceCode()). Use the local 'code-header' rule instead.
 
 const ignores = fs.readFileSync(path.join(import.meta.dirname, '.eslint-ignore'), 'utf8')
 	.toString()
@@ -38,7 +38,6 @@ export default defineConfig(
 		},
 		plugins: {
 			'local': pluginLocal,
-			'header': pluginHeader,
 		},
 		rules: {
 			'constructor-super': 'warn',
@@ -125,9 +124,8 @@ export default defineConfig(
 					]
 				}
 			],
-			'header/header': [
+			'local/code-header': [
 				2,
-				'block',
 				[
 					'---------------------------------------------------------------------------------------------',
 					' *  Copyright (c) Microsoft Corporation. All rights reserved.',
