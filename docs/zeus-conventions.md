@@ -45,7 +45,7 @@ Frontmatter fields:
 
 - `name` (required): unique identifier within `.zeus/skills/`. Duplicates fail loading.
 - `description` (required): one-line summary used by the model to decide when to invoke the skill.
-- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. **Omitted** = all tools allowed; **present but empty** = no tools allowed.
+- `allowed-tools` (optional): comma-separated list of MCP tool names this skill may call. **Omitted** = no tools allowed (least-privilege default — the skill is read-only unless it explicitly opts in); **present but empty** = also no tools allowed; **present with names** = exactly those tools. Use `'*'` to mean "all tools" if you really want that.
 
 ## `.zeus/memory/`
 
@@ -65,10 +65,10 @@ Constitutional rules. Two sections:
 
 ## Hard rules
 
-- Never write secrets or tokens back into a buffer.
-- Confirm before `rm -rf`, `DROP TABLE`, or `git push --force`.
-- Do not auto-run database migrations; generate them, ask before applying.
-- Do not call write APIs against production URLs (`*.prod.*`, `app.example.com`).
+- Never write secrets, tokens, or passwords back into a buffer.
+- Confirm before `rm -rf`, `DROP TABLE`, `git push --force`, `git push --force-with-lease`, or any destructive irreversible action.
+- Do not auto-run database migrations. Generating them is fine; applying them requires explicit user approval.
+- Do not call write APIs against production URLs (e.g., `*.prod.*`, `app.example.com`) unless the user explicitly opts in for the session.
 
 ## Soft preferences
 
