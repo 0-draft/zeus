@@ -1,0 +1,48 @@
+name: ext-import
+
+# Smoke-test that popular VS Code extensions install and list cleanly
+# against a built Zeus. The full design is at docs/zeus-extension-import.md.
+#
+# This workflow is currently disabled at the trigger level (no push /
+# pull_request handlers) because:
+#   1. ci.yml's compile-extensions-build step is parked (gulp-vinyl-zip +
+#      Open VSX hangs)
+#   2. We need a usable Zeus binary, which a packaged build provides
+#
+# Once compile-extensions-build is back and we have a dmg/AppImage step,
+# flip the trigger to push: main + weekly cron.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ext-import-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ext-import:
+    name: extension import
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install system libs
+        run: sudo apt-get update && sudo apt-get install -y libkrb5-dev libsecret-1-dev libxkbfile-dev jq
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+          PUPPETEER_SKIP_DOWNLOAD: "1"
+
+      - name: Compile (gulp)
+        run: npm run compile
+
+      - name: Run extension import smoke test
+        run: ./test/extension-import/run.sh
