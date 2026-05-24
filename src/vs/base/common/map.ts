@@ -356,76 +356,40 @@ export class LinkedMap<K, V> implements Map<K, V> {
 		}
 	}
 
-	keys(): MapIterator<K> {
-		const map = this;
+	*keys(): MapIterator<K> {
 		const state = this._state;
 		let current = this._head;
-		const iterator: MapIterator<K> = {
-			[Symbol.iterator]() {
-				return iterator;
-			},
-			next(): IteratorResult<K> {
-				if (map._state !== state) {
-					throw new Error(`LinkedMap got modified during iteration.`);
-				}
-				if (current) {
-					const result = { value: current.key, done: false };
-					current = current.next;
-					return result;
-				} else {
-					return { value: undefined, done: true };
-				}
+		while (current) {
+			if (this._state !== state) {
+				throw new Error(`LinkedMap got modified during iteration.`);
 			}
-		};
-		return iterator;
+			yield current.key;
+			current = current.next;
+		}
 	}
 
-	values(): MapIterator<V> {
-		const map = this;
+	*values(): MapIterator<V> {
 		const state = this._state;
 		let current = this._head;
-		const iterator: MapIterator<V> = {
-			[Symbol.iterator]() {
-				return iterator;
-			},
-			next(): IteratorResult<V> {
-				if (map._state !== state) {
-					throw new Error(`LinkedMap got modified during iteration.`);
-				}
-				if (current) {
-					const result = { value: current.value, done: false };
-					current = current.next;
-					return result;
-				} else {
-					return { value: undefined, done: true };
-				}
+		while (current) {
+			if (this._state !== state) {
+				throw new Error(`LinkedMap got modified during iteration.`);
 			}
-		};
-		return iterator;
+			yield current.value;
+			current = current.next;
+		}
 	}
 
-	entries(): MapIterator<[K, V]> {
-		const map = this;
+	*entries(): MapIterator<[K, V]> {
 		const state = this._state;
 		let current = this._head;
-		const iterator: MapIterator<[K, V]> = {
-			[Symbol.iterator]() {
-				return iterator;
-			},
-			next(): IteratorResult<[K, V]> {
-				if (map._state !== state) {
-					throw new Error(`LinkedMap got modified during iteration.`);
-				}
-				if (current) {
-					const result: IteratorResult<[K, V]> = { value: [current.key, current.value], done: false };
-					current = current.next;
-					return result;
-				} else {
-					return { value: undefined, done: true };
-				}
+		while (current) {
+			if (this._state !== state) {
+				throw new Error(`LinkedMap got modified during iteration.`);
 			}
-		};
-		return iterator;
+			yield [current.key, current.value];
+			current = current.next;
+		}
 	}
 
 	[Symbol.iterator](): MapIterator<[K, V]> {
