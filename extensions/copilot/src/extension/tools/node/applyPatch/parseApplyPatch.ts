@@ -14,7 +14,7 @@
 //
 // Based on the Codex implementation https://github.com/openai/codex/blob/b73426c1c40187ca13c74c03912a681072c2884f/codex-cli/src/parse-apply-patch.ts#L1
 
-/* eslint-disable header/header */
+/* eslint-disable local/code-header */
 export type ApplyPatchCreateFileOp = {
 	type: 'create';
 	path: string;
