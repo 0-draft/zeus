@@ -422,65 +422,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a822ea5bc7590f9d40f1ba12c0dc3c2760f3482c6984db1573ad11031420831"
 
 [[package]]
-name = "zeus-cli"
-version = "0.1.0"
-dependencies = [
- "ahp",
- "ahp-types",
- "ahp-ws",
- "base64",
- "bytes",
- "cfg-if",
- "clap",
- "clap_lex",
- "console",
- "const_format",
- "core-foundation",
- "dialoguer",
- "dirs 5.0.1",
- "flate2",
- "futures",
- "gethostname",
- "http",
- "http-body-util",
- "hyper",
- "hyper-util",
- "indicatif",
- "jiff",
- "keyring",
- "libc",
- "local-ip-address",
- "log",
- "open",
- "pin-project",
- "rand 0.8.6",
- "regex",
- "reqwest",
- "rmp-serde",
- "serde",
- "serde_bytes",
- "serde_json",
- "sha2",
- "shell-escape",
- "sysinfo",
- "tar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "tokio-util",
- "tunnels",
- "url",
- "uuid",
- "winapi",
- "windows-sys 0.61.2",
- "winreg 0.56.0",
- "winresource",
- "zbus",
- "zip",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3125,9 +3066,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.52.1"
+version = "1.52.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b67dee974fe86fd92cc45b7a95fdd2f99a36a6d7b0d431a231178d3d670bbcc6"
+checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
 dependencies = [
  "bytes",
  "libc",
@@ -4183,6 +4124,65 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.115",
+]
+
+[[package]]
+name = "zeus-cli"
+version = "0.1.0"
+dependencies = [
+ "ahp",
+ "ahp-types",
+ "ahp-ws",
+ "base64",
+ "bytes",
+ "cfg-if",
+ "clap",
+ "clap_lex",
+ "console",
+ "const_format",
+ "core-foundation",
+ "dialoguer",
+ "dirs 5.0.1",
+ "flate2",
+ "futures",
+ "gethostname",
+ "http",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "indicatif",
+ "jiff",
+ "keyring",
+ "libc",
+ "local-ip-address",
+ "log",
+ "open",
+ "pin-project",
+ "rand 0.8.6",
+ "regex",
+ "reqwest",
+ "rmp-serde",
+ "serde",
+ "serde_bytes",
+ "serde_json",
+ "sha2",
+ "shell-escape",
+ "sysinfo",
+ "tar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "tokio-util",
+ "tunnels",
+ "url",
+ "uuid",
+ "winapi",
+ "windows-sys 0.61.2",
+ "winreg 0.56.0",
+ "winresource",
+ "zbus",
+ "zip",
 ]
 
 [[package]]
