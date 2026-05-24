@@ -356,40 +356,56 @@ export class LinkedMap<K, V> implements Map<K, V> {
 		}
 	}
 
-	*keys(): MapIterator<K> {
+	keys(): MapIterator<K> {
+		// Capture state at iterator-creation time, not at first .next().
+		// Tests rely on `map.keys()` then `map.get(.., Touch.AsNew)`
+		// then `.next()` throwing — that only works when state was
+		// captured here, before the generator body starts.
 		const state = this._state;
-		let current = this._head;
-		while (current) {
-			if (this._state !== state) {
-				throw new Error(`LinkedMap got modified during iteration.`);
+		const self = this;
+		function* generator(): Generator<K> {
+			let current = self._head;
+			while (current) {
+				if (self._state !== state) {
+					throw new Error(`LinkedMap got modified during iteration.`);
+				}
+				yield current.key;
+				current = current.next;
 			}
-			yield current.key;
-			current = current.next;
 		}
+		return generator();
 	}
 
-	*values(): MapIterator<V> {
+	values(): MapIterator<V> {
 		const state = this._state;
-		let current = this._head;
-		while (current) {
-			if (this._state !== state) {
-				throw new Error(`LinkedMap got modified during iteration.`);
+		const self = this;
+		function* generator(): Generator<V> {
+			let current = self._head;
+			while (current) {
+				if (self._state !== state) {
+					throw new Error(`LinkedMap got modified during iteration.`);
+				}
+				yield current.value;
+				current = current.next;
 			}
-			yield current.value;
-			current = current.next;
 		}
+		return generator();
 	}
 
-	*entries(): MapIterator<[K, V]> {
+	entries(): MapIterator<[K, V]> {
 		const state = this._state;
-		let current = this._head;
-		while (current) {
-			if (this._state !== state) {
-				throw new Error(`LinkedMap got modified during iteration.`);
+		const self = this;
+		function* generator(): Generator<[K, V]> {
+			let current = self._head;
+			while (current) {
+				if (self._state !== state) {
+					throw new Error(`LinkedMap got modified during iteration.`);
+				}
+				yield [current.key, current.value];
+				current = current.next;
 			}
-			yield [current.key, current.value];
-			current = current.next;
 		}
+		return generator();
 	}
 
 	[Symbol.iterator](): MapIterator<[K, V]> {
