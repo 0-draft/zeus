@@ -21,6 +21,9 @@ cask "zeus" do
   homepage "https://github.com/0-draft/zeus"
 
   app "Zeus.app"
+  # CLI: 'z' on PATH. Lives inside the app bundle. zoxide users will
+  # need to alias one of the two; documented in zeus-distribution.md.
+  binary "#{appdir}/Zeus.app/Contents/Resources/app/bin/z"
 
   zap trash: [
     "~/.zeus",
@@ -31,6 +34,9 @@ cask "zeus" do
     "~/Library/HTTPStorages/com.0draft.zeus",
     "~/Library/Logs/Zeus",
     "~/Library/Preferences/com.0draft.zeus.plist",
-    "~/Library/Saved Application State/com.0draft.zeus.savedState"
+    "~/Library/Saved Application State/com.0draft.zeus.savedState",
+    "~/Library/WebKit/com.0draft.zeus",
+    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl3",
+    "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.0draft.zeus.sfl2"
   ]
 end
