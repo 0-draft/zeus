@@ -21,13 +21,15 @@ Hovering over each segment shows a tooltip with the breakdown (input tokens / ou
 
 - Live agent count: `IAgentRuntime` event stream (`feat/agent-sdk`)
 - Per-call cost and cache state: Anthropic SDK `usage` field, mapped to current model pricing
-- Today's cumulative: persisted to `IStorageService` workspace scope, key `zeus.ai.cost.today.<YYYY-MM-DD>`
+- Today's cumulative: persisted to `IStorageService` workspace scope under a single key `zeus.ai.cost` holding `{ date: "YYYY-MM-DD", total: number }`. When local midnight passes, the record is reset before the next write, so storage doesn't grow per day.
 
 ## Configuration
 
 - `zeus.ai.hud.enabled` (default: `true`) — show the HUD at all
 - `zeus.ai.hud.detail` (`"compact" | "verbose"`) — controls the format
 - `zeus.ai.hud.todayLimit` (number | null) — soft cap; turns the cost segment red when exceeded, no enforcement
+
+The HUD is implemented as **multiple adjacent `StatusBarItem`s** (agents, cache, cost, today). VS Code's `StatusBarItem` API does not support per-segment coloring inside a single item, so the colored "over limit" treatment lives on its own item.
 
 ## Why no enforcement
 
