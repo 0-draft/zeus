@@ -225,7 +225,7 @@ pub struct McpArgs {
 	pub workspace: Option<PathBuf>,
 }
 
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum McpTransport {
 	Stdio,
 	Sse,

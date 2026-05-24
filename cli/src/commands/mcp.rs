@@ -7,9 +7,11 @@
 // Scaffold only; real implementation lands in a follow-up PR. See
 // docs/zeus-mcp-server.md for the tool surface and design.
 
+use std::net::IpAddr;
+
 use crate::commands::args::{McpArgs, McpTransport};
 use crate::commands::CommandContext;
-use crate::util::errors::{wrap, AnyError};
+use crate::util::errors::{wrap, AnyError, SetupError};
 
 pub async fn mcp(_ctx: CommandContext, args: McpArgs) -> Result<i32, AnyError> {
 	let raw_workspace = match args.workspace {
@@ -23,6 +25,14 @@ pub async fn mcp(_ctx: CommandContext, args: McpArgs) -> Result<i32, AnyError> {
 	let workspace = std::fs::canonicalize(&raw_workspace)
 		.map_err(|e| wrap(e, format!("could not canonicalize workspace path {}", raw_workspace.display())))?;
 
+	if !workspace.is_dir() {
+		return Err(SetupError(format!(
+			"workspace path is not a directory: {}",
+			workspace.display()
+		))
+		.into());
+	}
+
 	match args.transport {
 		McpTransport::Stdio => {
 			eprintln!(
@@ -31,6 +41,23 @@ pub async fn mcp(_ctx: CommandContext, args: McpArgs) -> Result<i32, AnyError> {
 			);
 		}
 		McpTransport::Sse => {
+			// Refuse to bind to a non-loopback interface without explicit opt-in,
+			// to keep the default posture local-only. See docs/zeus-mcp-server.md.
+			let bind_addr: IpAddr = args.bind.parse().map_err(|e| {
+				wrap(
+					e,
+					format!("invalid --bind address: {} (expected an IP literal)", args.bind),
+				)
+			})?;
+			if !bind_addr.is_loopback() && !args.allow_non_loopback {
+				return Err(SetupError(format!(
+					"refusing to bind SSE transport on non-loopback address {} \
+without --allow-non-loopback (use 127.0.0.1 / ::1 for local-only)",
+					args.bind
+				))
+				.into());
+			}
+
 			eprintln!(
 				"zeus mcp: sse transport not yet implemented (port={}, bind={}, workspace={})",
 				args.port,
