@@ -14,7 +14,7 @@ zeus mcp [--transport stdio|sse] [--port N] [--workspace PATH]
 ```
 
 - `--transport`: defaults to `stdio` (Anthropic / Claude Code CLI standard). `sse` for HTTP clients.
-- `--port`: only meaningful with `--transport sse`. Defaults to a random ephemeral port; the chosen port is printed on stdout.
+- `--port`: only meaningful with `--transport sse`. Defaults to a random ephemeral port; the chosen port is printed on stderr (stdout is reserved for protocol traffic on the stdio transport, and we keep stderr consistent across transports).
 - `--workspace`: workspace root path. Defaults to `$PWD`.
 
 The Rust CLI launches a headless workbench process (or attaches to a running one if available) and proxies MCP traffic.

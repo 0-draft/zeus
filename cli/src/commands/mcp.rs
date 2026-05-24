@@ -8,12 +8,13 @@
 // docs/zeus-mcp-server.md for the tool surface and design.
 
 use crate::commands::args::{McpArgs, McpTransport};
-use crate::util::errors::AnyError;
+use crate::util::errors::{wrap, AnyError};
 
 pub async fn mcp(args: McpArgs) -> Result<i32, AnyError> {
-	let workspace = args
-		.workspace
-		.unwrap_or_else(|| std::env::current_dir().expect("cwd is readable"));
+	let workspace = match args.workspace {
+		Some(p) => p,
+		None => std::env::current_dir().map_err(|e| wrap(e, "could not resolve workspace from cwd"))?,
+	};
 
 	match args.transport {
 		McpTransport::Stdio => {
