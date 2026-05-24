@@ -14,6 +14,8 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
   - Why: the welcome page gates real work. Power users dismiss it; new users get inconsistent messaging.
   - Trade-off: new users miss the curated tour. Acceptable — we ship a 1-line "press Cmd+Shift+P for commands" tooltip on first launch instead.
 - `workbench.welcomePage.walkthroughs.openOnInstall`: `true` → **`false`**
+  - Why: same rationale as above — walkthrough overlays steal focus from the editor on first open.
+  - Trade-off: users who like the walkthrough have to find it in the command palette (`Open Walkthrough`).
 
 ## Telemetry
 
@@ -31,25 +33,39 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
   - Why: every junior dev's first complaint is "I lost my work." `onFocusChange` saves on context switch (tab away, terminal focus, palette open) — strictly safer than `off` without the rearrange-while-typing problem `afterDelay` has when combined with `formatOnSave`.
   - Trade-off: writes to disk happen at focus boundaries, slightly later than `afterDelay` but earlier than `onWindowChange`.
 - `files.trimTrailingWhitespace`: `false` → **`true`**
+  - Why: matches what almost every linter / formatter does anyway; the editor doing it preemptively means cleaner diffs.
+  - Trade-off: Markdown's "two trailing spaces = line break" convention loses on save. Users who care about that syntax can scope an override per-language.
 - `files.insertFinalNewline`: `false` → **`true`**
+  - Why: POSIX-friendly; many tools (`tail`, `cat`, `git diff`) handle file-with-trailing-newline better.
+  - Trade-off: noisy first-diff if a file in an existing repo previously lacked one.
 - `files.eol`: `auto` → **`auto`** (keep VS Code's default)
   - Why: cross-platform / Windows-native repos that mix CRLF need this. Pinning to `\n` here would silently rewrite `.bat`, PowerShell scripts, and legacy Windows-CRLF files when saved. Project-level `.editorconfig` is the right place to enforce `\n` per repo.
 
 ## Editor
 
 - `editor.formatOnSave`: `false` → **`true`** (only if a formatter is configured for the language)
+  - Why: catches forgotten formatting on every save instead of relying on pre-commit hooks.
   - Implementation: a one-line activation hook checks for a formatter; if present, format-on-save is enabled.
+  - Also: `editor.formatOnSaveMode`: `file` → **`modifications`**. Only the lines the user touched are reformatted. Saves legacy / messy codebases from one-shot formatter churn the first time they're opened in Zeus.
+  - Trade-off: users on green-field projects sometimes want full-file format; one-line override per workspace.
 - `editor.minimap.enabled`: `true` → **`false`**
   - Why: minimap is noise for most users. The 20% who love it can flip it back.
+  - Trade-off: keyboard scroll fans love the visual map; documented in the cheat sheet.
 - `editor.linkedEditing`: `false` → **`true`**
+  - Why: HTML/JSX tag renames stay in sync without a refactor command.
+  - Trade-off: extra mutation events some extensions don't expect.
 - `editor.bracketPairColorization.enabled`: `true` → **`true`** (keep)
 - `editor.guides.bracketPairs`: `false` → **`"active"`**
+  - Why: highlights the bracket nesting around the cursor without painting every line.
+  - Trade-off: more visual noise for users who prefer a totally clean gutter.
 - `editor.fontFamily`: VS Code default → **OS-native monospace stack** (SF Mono on macOS, Cascadia Code on Windows, `monospace` on Linux — fontconfig resolves it to the system's preferred fixed-width family)
   - Why: VS Code defaults to Consolas / Menlo. Modern OS-native looks better in 2026.
 
 ## Terminal
 
 - `terminal.integrated.copyOnSelection`: `false` → **`true`**
+  - Why: matches macOS Terminal / iTerm muscle memory and Linux X11 default.
+  - Trade-off: clobbers the system clipboard mid-task for users who rely on long-lived clipboard contents.
 - `terminal.integrated.shellIntegration.enabled`: `true` → **`true`** (keep)
 
 ## Search
@@ -59,6 +75,8 @@ For each setting we change, we say: **what** changes, **why** the inherited defa
 ## Git
 
 - `git.autofetch`: `false` → **`true`**
+  - Why: keeps remote-aware UI (ahead/behind indicators, "Pull from main") current without manual fetch.
+  - Trade-off: users with credential-manager-less SSH setups (passphrase-protected keys, no agent) get repeated prompts. Documented in install notes — the answer is "set up a credential manager", not "disable autofetch".
 - `git.confirmSync`: `true` → **`true`** (keep)
   - Why: "Sync Changes" pushes and pulls in one shot, so a stray click can publish unfinished work. The confirmation is one extra return key but is what stops a category of accidents. We optimize for safety here, not for one fewer keystroke.
 
