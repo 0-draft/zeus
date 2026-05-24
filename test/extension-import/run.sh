@@ -27,8 +27,8 @@ trap cleanup EXIT
 echo "==> Using Zeus binary: ${ZEUS_BIN}"
 echo "==> User data dir:     ${USER_DATA_DIR}"
 
-if [[ ! -x "${ZEUS_BIN}" && ! -f "${ZEUS_BIN}" ]]; then
-	echo "FAIL: Zeus binary not found at ${ZEUS_BIN}" >&2
+if [[ ! -x "${ZEUS_BIN}" ]]; then
+	echo "FAIL: Zeus binary not found or not executable at ${ZEUS_BIN}" >&2
 	exit 1
 fi
 
@@ -36,7 +36,7 @@ fi
 if command -v jq >/dev/null 2>&1; then
 	mapfile -t EXTENSIONS < <(jq -r '.extensions[]' "${MANIFEST}")
 else
-	mapfile -t EXTENSIONS < <(python3 -c "import json,sys; [print(e) for e in json.load(open('${MANIFEST}'))['extensions']]")
+	mapfile -t EXTENSIONS < <(python3 -c "import json,sys; [print(e) for e in json.load(open(sys.argv[1]))['extensions']]" "${MANIFEST}")
 fi
 
 if [[ ${#EXTENSIONS[@]} -eq 0 ]]; then
@@ -44,18 +44,22 @@ if [[ ${#EXTENSIONS[@]} -eq 0 ]]; then
 	exit 1
 fi
 
-echo "==> Installing ${#EXTENSIONS[@]} extension(s)…"
+echo "==> Installing ${#EXTENSIONS[@]} extension(s) in a single call…"
+
+# Batch all --install-extension flags into one invocation; each fork
+# of the binary is expensive (Node start-up, gulp watch warm-up).
+INSTALL_ARGS=()
+for ext in "${EXTENSIONS[@]}"; do
+	INSTALL_ARGS+=(--install-extension "${ext}")
+done
 
 FAILURES=()
-for ext in "${EXTENSIONS[@]}"; do
-	echo "    -> ${ext}"
-	if ! "${ZEUS_BIN}" \
-			--user-data-dir "${USER_DATA_DIR}" \
-			--extensions-dir "${EXT_DIR}" \
-			--install-extension "${ext}" 2>&1 | tee -a "${USER_DATA_DIR}/install.log"; then
-		FAILURES+=("install:${ext}")
-	fi
-done
+if ! "${ZEUS_BIN}" \
+		--user-data-dir "${USER_DATA_DIR}" \
+		--extensions-dir "${EXT_DIR}" \
+		"${INSTALL_ARGS[@]}" 2>&1 | tee -a "${USER_DATA_DIR}/install.log"; then
+	FAILURES+=("install:batch")
+fi
 
 if [[ ${#FAILURES[@]} -ne 0 ]]; then
 	echo "FAIL: extension(s) failed to install:" >&2

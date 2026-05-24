@@ -24,10 +24,10 @@ We deliberately **do not** test Microsoft-published extensions that enforce runt
 `test/extension-import/run.sh` does:
 
 1. Spins up a clean user data dir
-2. For each extension in `manifest.json`, calls `code --install-extension <publisher.name>`
-3. For each extension, calls `code --list-extensions --show-versions` and asserts the install succeeded
-4. Launches `code --status` to confirm the workbench boots with all extensions enabled
-5. Reads the extension log file to ensure no `Failed to activate` entries for the tested extensions
+2. Installs all extensions from `manifest.json` in a single `--install-extension ... --install-extension ...` call (binary startup is expensive, batching is faster)
+3. Calls `code --list-extensions --show-versions` and asserts each entry from the manifest is present
+
+Activation-failure log scanning and `code --status` boot checks are listed as follow-up work in the acceptance criteria below — they are useful but not part of the v1 harness.
 
 Reproduces a real install pattern. Run locally:
 
