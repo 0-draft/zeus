@@ -32,11 +32,13 @@ if [[ ! -x "${ZEUS_BIN}" ]]; then
 	exit 1
 fi
 
-# Parse manifest with jq (or python fallback).
+# Parse manifest with jq (or python fallback). Avoid 'mapfile' so this
+# also works under macOS's default Bash 3.2 for local runs.
+EXTENSIONS=()
 if command -v jq >/dev/null 2>&1; then
-	mapfile -t EXTENSIONS < <(jq -r '.extensions[]' "${MANIFEST}")
+	while IFS= read -r line; do EXTENSIONS+=("${line}"); done < <(jq -r '.extensions[]' "${MANIFEST}")
 else
-	mapfile -t EXTENSIONS < <(python3 -c "import json,sys; [print(e) for e in json.load(open(sys.argv[1]))['extensions']]" "${MANIFEST}")
+	while IFS= read -r line; do EXTENSIONS+=("${line}"); done < <(python3 -c "import json,sys; [print(e) for e in json.load(open(sys.argv[1]))['extensions']]" "${MANIFEST}")
 fi
 
 if [[ ${#EXTENSIONS[@]} -eq 0 ]]; then
@@ -75,7 +77,12 @@ INSTALLED="$("${ZEUS_BIN}" \
 echo "${INSTALLED}"
 
 for ext in "${EXTENSIONS[@]}"; do
-	if ! echo "${INSTALLED}" | grep -qi "^${ext}@"; then
+	# 'grep -F' treats the needle as a fixed string, so dots in
+	# extension IDs (e.g. 'golang.go') aren't wildcards. The '@'
+	# tail anchors at the version separator emitted by
+	# '--list-extensions --show-versions', and 'grep -i' keeps the
+	# case-insensitive match the listing uses.
+	if ! echo "${INSTALLED}" | grep -Fqi "${ext}@"; then
 		FAILURES+=("missing:${ext}")
 	fi
 done
