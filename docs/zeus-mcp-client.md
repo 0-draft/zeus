@@ -4,14 +4,40 @@ Zeus consumes MCP servers listed in `.zeus/mcp.json` and exposes their tools to 
 
 ## Where this lives
 
-`src/vs/workbench/contrib/mcpClient/` — a workbench contribution that:
+`src/vs/workbench/contrib/mcpClient/` — a workbench contribution split across the `common/`, `browser/`, and `node/` layers per vscode's architecture:
+
+- `common/` — config schema, types, the workspace-side `McpToolAggregator` that hands a unified registry to the agent runtime
+- `browser/` — UI surfaces (status bar entries, error notifications, the trust-prompt for newly-added stdio entries)
+- `node/` — process spawning. `stdio` MCP servers must be launched from the main / node side; `browser/` cannot spawn child processes in vscode's sandbox. SSE connections can live in either layer
+
+Behaviour:
 
 - Reads `.zeus/mcp.json` from the workspace root
-- Spawns stdio MCP servers as subprocesses, or opens SSE connections
+- Spawns stdio MCP servers (`node/`) as subprocesses, or opens SSE connections
 - Aggregates the tool list and exposes it to the agent runtime
 - Reloads on `.zeus/mcp.json` change
 
 This is intentionally a built-in contribution rather than a VS Code extension. MCP server lifecycles are too important to let users disable accidentally; we want them tied to the workspace lifecycle.
+
+## Trust model — RCE risk
+
+`.zeus/mcp.json` lists *commands to execute*. Anyone with commit rights can add an arbitrary command, and a colleague who pulls and opens the workspace would silently spawn it. That's a real RCE vector.
+
+Mitigations:
+
+- **Trust prompt** — the first time a workspace is opened with a non-empty `mcp.json`, or whenever a new server entry is added in a subsequent pull, Zeus blocks startup of those servers and shows a per-server confirmation pane (similar to vscode's "Restricted Mode" workspace trust). Accepting writes a fingerprint into per-user (not in-git) state so the prompt doesn't re-fire on every edit.
+- **Inherit Workspace Trust** — if the workspace is in Restricted Mode, refuse to spawn any stdio server. SSE-only entries can be allowed because they don't execute local code.
+- **Hard refuse on `command: bash -c "<arbitrary>"` patterns** — block shell-form commands in `command:`; require `args:` arrays for argument vectors.
+
+## Secret storage
+
+`mcp.json` lives in git. We only allow `${env:NAME}` and `${secret:<store>:NAME}` references in `env` blocks for credentials:
+
+- `${env:NAME}` resolves at spawn time from the user's environment
+- `${secret:keychain:NAME}` reads from `vscode.SecretStorage` (per-user, OS-keychain backed)
+- Plain string values are accepted only for non-secret config; the loader warns when a field name matches a heuristic list (`*_TOKEN`, `*_KEY`, `*_SECRET`, `PASSWORD`) and the value isn't a reference
+
+Never write secret values back into the file. The loader is read-only against `mcp.json`.
 
 ## Why not [VS Code's `vscode.lm` tool API](https://code.visualstudio.com/api/extension-guides/tools)?
 
@@ -52,6 +78,7 @@ IAgentRuntime (Agent SDK PR consumes this)
 - [ ] Reloads on file change without restarting unaffected servers
 - [ ] Surfaces server connection errors in the status bar
 - [ ] Refuses servers that try to register tools with reserved name prefixes (`buffer_`, `agent_`, `editor_` — those belong to the MCP **server** half)
+- [ ] Collisions across servers are resolved by namespacing exposed tools as `<server-name>__<tool-name>` in the aggregated registry; the underlying call still goes to the originally-named tool on the right server. UI surfaces show the short tool name with the server name as secondary text.
 
 ## Status
 
