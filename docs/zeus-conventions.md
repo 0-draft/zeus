@@ -9,7 +9,7 @@ This document is the format spec. Implementation lands in [`feat/mcp-client`](ht
 ```text
 .zeus/
 ├── skills/                # team-shared AI behaviours
-│   ├── secret-scan.md
+│   ├── example-secret-scan.md
 │   └── commit-msg.md
 ├── memory/                # persistent project context
 │   ├── README.md
