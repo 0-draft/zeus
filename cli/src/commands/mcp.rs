@@ -33,10 +33,14 @@ pub async fn mcp(_ctx: CommandContext, args: McpArgs) -> Result<i32, AnyError> {
 
 	match args.transport {
 		McpTransport::Stdio => {
-			eprintln!(
+			// Scaffold-only: surface this as a SetupError (non-zero exit)
+			// rather than Ok(0). A silent exit-0 would let scripts that
+			// pipe this command into a real MCP client appear to succeed.
+			Err(SetupError(format!(
 				"zeus mcp: stdio transport not yet implemented (workspace={})",
 				workspace.display()
-			);
+			))
+			.into())
 		}
 		McpTransport::Sse => {
 			// Refuse to bind to a non-loopback interface without explicit opt-in,
@@ -52,14 +56,13 @@ without --allow-non-loopback (use 127.0.0.1 / ::1 for local-only)",
 				.into());
 			}
 
-			eprintln!(
+			Err(SetupError(format!(
 				"zeus mcp: sse transport not yet implemented (port={}, bind={}, workspace={})",
 				args.port,
 				args.bind,
 				workspace.display()
-			);
+			))
+			.into())
 		}
 	}
-
-	Ok(0)
 }

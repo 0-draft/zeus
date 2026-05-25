@@ -10,11 +10,13 @@ Implementation lives in two places:
 ## Subcommand surface
 
 ```text
-zeus mcp [--transport stdio|sse] [--port N] [--workspace PATH]
+zeus mcp [--transport stdio|sse] [--port N] [--bind IP] [--allow-non-loopback] [--workspace PATH]
 ```
 
 - `--transport`: defaults to `stdio` (Anthropic / Claude Code CLI standard). `sse` for HTTP clients.
 - `--port`: only meaningful with `--transport sse`. Defaults to a random ephemeral port; the chosen port is printed on stderr (stdout is reserved for protocol traffic on the stdio transport, and we keep stderr consistent across transports).
+- `--bind`: only meaningful with `--transport sse`. Defaults to `127.0.0.1` (loopback). Accepts IP literals only — pass `127.0.0.1` / `::1` for loopback, not `localhost`. Any non-loopback value additionally requires `--allow-non-loopback`.
+- `--allow-non-loopback`: acknowledges that binding the SSE transport to a non-loopback interface (`0.0.0.0`, a LAN IP, etc.) is intentional. Without this flag, non-loopback `--bind` values are refused.
 - `--workspace`: workspace root path. Defaults to `$PWD`.
 
 The Rust CLI launches a headless workbench process (or attaches to a running one if available) and proxies MCP traffic.
