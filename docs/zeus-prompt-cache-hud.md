@@ -11,7 +11,7 @@ This is positioned directly against Cursor's credit model, which most users desc
 ```
 
 - **`⚡ N agents`**: number of currently-running subagents. Clickable → opens parallel-agents view
-- **`X% cache`**: rolling cache hit ratio over the last 100 requests. State (window + day totals) lives on the singleton **main-process** service `IAiCostService`, not directly in `IStorageService`, so multiple workbench windows opened against different workspaces stay consistent. The main process persists snapshots to `IStorageService.APPLICATION` (key `zeus.ai.cache.window`) once a second so a hard kill doesn't lose more than ~1s of data. Renderer windows subscribe to the service over IPC.
+- **`X% cache`**: rolling cache hit ratio over the last 100 requests. State (window + day totals) lives on the singleton **main-process** service `IAiCostService`, not directly in `IStorageService`, so multiple workbench windows opened against different workspaces stay consistent. The main process persists snapshots to `IStorageService.APPLICATION` (key `zeus.ai.cache.window`) on a 1s debounce so a hard kill doesn't lose more than ~1s of data. The debounce is durability-only — renderer windows stay in sync via IPC subscriptions, not by re-reading storage, so write frequency does not affect UI latency or cross-window consistency.
 - **`$X.XXX`**: cost of the most recent AI call
 - **`$X.XX today`**: cumulative cost for the local day (resets midnight)
 
@@ -30,6 +30,7 @@ Hovering over each segment shows a tooltip with the breakdown (input tokens / ou
 - `zeus.ai.hud.enabled` (default: `true`) — show the HUD at all
 - `zeus.ai.hud.detail` (`"compact" | "verbose"`) — controls the format
 - `zeus.ai.hud.todayLimit` (number | null) — soft cap in USD (matches the units shown in the status bar); turns the cost segment red when exceeded, no enforcement. `null` disables the colouring.
+- `zeus.ai.hud.stalePricingDays` (number | null, default `30`) — show the `⚠` stale-pricing glyph once the bundled pricing file is older than this many days. `null` disables the warning entirely for users in restricted environments (corporate-locked editor versions, offline installs) where update cadence is out of their control.
 
 The HUD is implemented as **multiple adjacent `StatusBarItem`s** (agents, cache, cost, today). VS Code's `StatusBarItem` API does not support per-segment coloring inside a single item, so the colored "over limit" treatment lives on its own item.
 
@@ -44,7 +45,7 @@ Hard credit caps are what makes Cursor frustrating. Zeus shows the number; the u
 - [ ] Hover tooltip shows token / cost breakdown
 - [ ] `today` value persists across editor restarts in the same local day
 - [ ] Setting `zeus.ai.hud.enabled = false` hides the item entirely
-- [ ] Pricing table lives in a bundled JSON file (`src/vs/workbench/contrib/aiHud/common/anthropicPricing.json`) shipped with the build. Updated by a dependabot-style PR when the upstream price page changes — see `script/refresh-pricing.mjs`. The HUD never makes a live network call for pricing on a hot path (latency + offline). If the file is older than 30 days the HUD shows a small `⚠` glyph next to the cost segment and the tooltip says `"Pricing data from {date}; estimates may be stale — update Zeus"`. The user-visible numbers continue to use the bundled table; the warning is visible because the transparency goal of this feature is broken if users silently look at outdated estimates.
+- [ ] Pricing table lives in a bundled JSON file (`src/vs/workbench/contrib/aiHud/common/anthropicPricing.json`) shipped with the build. Updated by a dependabot-style PR when the upstream price page changes — see `script/refresh-pricing.mjs`. The HUD never makes a live network call for pricing on a hot path (latency + offline). If the file is older than `zeus.ai.hud.stalePricingDays` (default `30`) the HUD shows a small `⚠` glyph next to the cost segment and the tooltip says `"Pricing data from {date}; estimates may be stale — update Zeus"`. The user-visible numbers continue to use the bundled table; the warning is visible because the transparency goal of this feature is broken if users silently look at outdated estimates. Setting the threshold to `null` suppresses the glyph for users whose editor version cadence is out of their control.
 
 ## Status
 
