@@ -51,7 +51,7 @@ An **auxiliary bar view** (the right-side container in VS Code's workbench — f
 ## Acceptance criteria (real impl)
 
 - [ ] Quick-pick of skills picks one and starts it
-- [ ] Side bar shows live tool-call timeline per agent
+- [ ] Auxiliary bar shows live tool-call timeline per agent
 - [ ] Cancel works mid-stream
 - [ ] Done agents persist in the view for the session
 - [ ] No auto-open behavior on startup
