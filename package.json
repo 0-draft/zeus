@@ -179,7 +179,7 @@
     "@types/yazl": "^2.4.6",
     "@typescript-eslint/utils": "^8.60.0",
     "@typescript/native-preview": "^7.0.0-dev.20260429",
-    "@vscode/component-explorer": "^0.2.1-27",
+    "@vscode/component-explorer": "^0.2.1-42",
     "@vscode/component-explorer-cli": "^0.2.1-27",
     "@vscode/gulp-electron": "1.41.3",
     "@vscode/l10n-dev": "0.0.35",
