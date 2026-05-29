@@ -90,12 +90,12 @@ async function main(): Promise<void> {
 		.pipe(filter(f => !f.isDirectory()));
 
 	const compressed = all
-		.pipe(filter(f => MimeTypesToCompress.has(mime.lookup(f.path))))
+		.pipe(filter(f => MimeTypesToCompress.has((mime.getType(f.path) ?? ''))))
 		.pipe(gzip({ append: false }))
 		.pipe(azureStorage.upload(options(true)));
 
 	const uncompressed = all
-		.pipe(filter(f => !MimeTypesToCompress.has(mime.lookup(f.path))))
+		.pipe(filter(f => !MimeTypesToCompress.has((mime.getType(f.path) ?? ''))))
 		.pipe(azureStorage.upload(options(false)));
 
 	const out = es.merge(compressed, uncompressed)
