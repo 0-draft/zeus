@@ -32,7 +32,7 @@
     "@xterm/headless": "^6.1.0-beta.213",
     "@xterm/xterm": "^6.1.0-beta.213",
     "cookie": "^0.7.0",
-    "http-proxy-agent": "^7.0.2",
+    "http-proxy-agent": "^9.0.0",
     "https-proxy-agent": "^7.0.6",
     "jschardet": "3.1.4",
     "katex": "^0.16.47",
