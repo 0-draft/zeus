@@ -115,6 +115,7 @@ function makeMessage(model: string): Anthropic.Message {
 			inference_geo: null,
 			server_tool_use: null,
 			service_tier: null,
+			output_tokens_details: null,
 		},
 	};
 }
@@ -141,6 +142,7 @@ function makeCannedStream(model: string): Anthropic.MessageStreamEvent[] {
 			cache_creation_input_tokens: null,
 			cache_read_input_tokens: null,
 			server_tool_use: null,
+			output_tokens_details: null,
 		},
 	};
 	return [
@@ -192,6 +194,7 @@ function makeResultSuccess(sessionId: string): SDKResultSuccess {
 			input_tokens: 0,
 			iterations: [],
 			output_tokens: 0,
+			output_tokens_details: { thinking_tokens: 0 },
 			server_tool_use: { web_fetch_requests: 0, web_search_requests: 0 },
 			service_tier: 'standard',
 			speed: 'standard',
@@ -454,6 +457,8 @@ class RoundTripQuery implements AsyncGenerator<SDKMessage, void> {
 	mcpServerStatus(): never { throw new Error('not modeled'); }
 	getContextUsage(): never { throw new Error('not modeled'); }
 	reloadPlugins(): never { throw new Error('not modeled'); }
+	reloadSkills(): never { throw new Error('not modeled'); }
+	backgroundTasks(): never { throw new Error('not modeled'); }
 	accountInfo(): never { throw new Error('not modeled'); }
 	rewindFiles(): never { throw new Error('not modeled'); }
 	readFile(): never { throw new Error('not modeled'); }
