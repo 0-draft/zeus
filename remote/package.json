@@ -41,7 +41,7 @@
     "node-pty": "^1.2.0-beta.13",
     "ssh2": "^1.17.0",
     "tas-client": "0.4.1",
-    "vscode-oniguruma": "1.7.0",
+    "vscode-oniguruma": "2.0.1",
     "vscode-regexpp": "^3.1.0",
     "vscode-textmate": "^9.3.2",
     "ws": "^8.21.0",
