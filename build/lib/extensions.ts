@@ -6,7 +6,7 @@
 import es from 'event-stream';
 import fs from 'fs';
 import cp from 'child_process';
-import glob from 'glob';
+import { glob } from 'glob';
 import { gulp, filter, rename, buffer, vinylZip, jsonEditor } from './gulp/facade.ts';
 import path from 'path';
 import crypto from 'crypto';

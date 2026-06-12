@@ -10,10 +10,9 @@ EventEmitter.defaultMaxListeners = 100;
 import es from 'event-stream';
 import fancyLog from 'fancy-log';
 import * as fs from 'fs';
-import glob from 'glob';
+import { glob } from 'glob';
 import { gulp, filter, plumber, sourcemaps } from './lib/gulp/facade.ts';
 import * as path from 'path';
-import * as nodeUtil from 'util';
 import * as ext from './lib/extensions.ts';
 import { getVersion } from './lib/getVersion.ts';
 import { createReporter } from './lib/reporter.ts';
@@ -315,7 +314,7 @@ async function buildWebExtensions(isWatch: boolean): Promise<void> {
 	const extensionsPath = path.join(root, 'extensions');
 
 	// Find all esbuild.browser.mts files
-	const esbuildConfigLocations = await nodeUtil.promisify(glob)(
+	const esbuildConfigLocations = await glob(
 		path.join(extensionsPath, '**', 'esbuild.browser.mts'),
 		{ ignore: ['**/node_modules'] }
 	);

@@ -65,7 +65,7 @@ const fs = require('fs');
 const { ipcRenderer } = require('electron');
 const assert = require('assert');
 const path = require('path');
-const glob = require('glob');
+const { glob } = require('glob');
 const util = require('util');
 const coverage = require('../coverage');
 const { pathToFileURL } = require('url');
@@ -156,7 +156,7 @@ async function loadModules(modules) {
 	}
 }
 
-const globAsync = util.promisify(glob);
+const globAsync = glob;
 
 async function loadTestModules(opts) {
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { ESLint } from 'eslint';
-import glob from 'glob';
+import { glob } from 'glob';
 import { createRequire } from 'module';
 import path from 'path';
 

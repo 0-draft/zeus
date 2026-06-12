@@ -31,13 +31,12 @@ import { copyCodiconsTask } from './lib/compilation.ts';
 import { getCopilotExcludeFilter, getRipgrepExcludeFilter, prepareBuiltInCopilotRipgrepShim } from './lib/copilot.ts';
 import { useEsbuildTranspile } from './buildConfig.ts';
 import { promisify } from 'util';
-import globCallback from 'glob';
+import { glob } from 'glob';
 import rceditCallback from 'rcedit';
 import { spawnTsgo } from './lib/tsgo.ts';
 import { runEsbuildTranspile, runEsbuildBundle } from './lib/esbuild.ts';
 
 
-const glob = promisify(globCallback);
 const rcedit = promisify(rceditCallback);
 const root = path.dirname(import.meta.dirname);
 const commit = getVersion(root);
